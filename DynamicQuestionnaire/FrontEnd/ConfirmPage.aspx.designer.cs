@@ -69,40 +69,40 @@ namespace DynamicQuestionnaire.FrontEnd
         protected global::System.Web.UI.WebControls.Label lblQSetume;
 
         /// <summary>
-        /// txbName 控制項。
+        /// ltlName 控制項。
         /// </summary>
         /// <remarks>
         /// 自動產生的欄位。
         /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txbName;
+        protected global::System.Web.UI.WebControls.Literal ltlName;
 
         /// <summary>
-        /// txbPhone 控制項。
+        /// ltlPhone 控制項。
         /// </summary>
         /// <remarks>
         /// 自動產生的欄位。
         /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txbPhone;
+        protected global::System.Web.UI.WebControls.Literal ltlPhone;
 
         /// <summary>
-        /// txbEmail 控制項。
+        /// ltlEmail 控制項。
         /// </summary>
         /// <remarks>
         /// 自動產生的欄位。
         /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txbEmail;
+        protected global::System.Web.UI.WebControls.Literal ltlEmail;
 
         /// <summary>
-        /// txbAge 控制項。
+        /// ltlAge 控制項。
         /// </summary>
         /// <remarks>
         /// 自動產生的欄位。
         /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txbAge;
+        protected global::System.Web.UI.WebControls.Literal ltlAge;
 
         /// <summary>
         /// plh 控制項。
@@ -114,6 +114,24 @@ namespace DynamicQuestionnaire.FrontEnd
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl plh;
 
         /// <summary>
+        /// ltlModalTitle 控制項。
+        /// </summary>
+        /// <remarks>
+        /// 自動產生的欄位。
+        /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Literal ltlModalTitle;
+
+        /// <summary>
+        /// ltlModalContent 控制項。
+        /// </summary>
+        /// <remarks>
+        /// 自動產生的欄位。
+        /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Literal ltlModalContent;
+
+        /// <summary>
         /// edit 控制項。
         /// </summary>
         /// <remarks>
@@ -121,6 +139,24 @@ namespace DynamicQuestionnaire.FrontEnd
         /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
         /// </remarks>
         protected global::System.Web.UI.WebControls.Button edit;
+
+        /// <summary>
+        /// Literal1 控制項。
+        /// </summary>
+        /// <remarks>
+        /// 自動產生的欄位。
+        /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Literal Literal1;
+
+        /// <summary>
+        /// Literal2 控制項。
+        /// </summary>
+        /// <remarks>
+        /// 自動產生的欄位。
+        /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Literal Literal2;
 
         /// <summary>
         /// gogo 控制項。

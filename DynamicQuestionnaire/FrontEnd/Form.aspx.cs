@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.UI;
+using System.Web.UI.DataVisualization.Charting;
 using System.Web.UI.WebControls;
 
 namespace DynamicQuestionnaire.FrontEnd
@@ -38,14 +39,18 @@ namespace DynamicQuestionnaire.FrontEnd
                 this.Total.Text = $"共{qtll.Count}個問題";
                 // State 1 = 開啟, State 2 = 關閉
                 if (DateTime.Compare(qt.DateStart, DateTime.Now) > 0 || DateTime.Compare(qt.DateEnd, DateTime.Now) < 0 || qt.State == 2)
+                {
+                    this.pnl.Enabled = false;
                     this.gogogo.Visible = false;
+                }
+
                 //this.plh.Controls.Clear(); // 清除生成的問卷控制項
                 // 根據有幾個問題動態生成幾項問題
                 // Type 1 = 單選方塊, Type 2 = 複選方塊, Type 3 = 文字方塊
                 for (var i = 0; i < qtll.Count; i++)
                 {
                     Label lbl = new Label();
-                    string lbltext = $"{i+1}. {qtll[i].Title}";
+                    string lbltext = $"{i + 1}. {qtll[i].Title}";
                     lbl.Text = lbltext;
                     this.plh.Controls.Add(lbl);
                     switch (qtll[i].Type)
@@ -77,8 +82,75 @@ namespace DynamicQuestionnaire.FrontEnd
                         case 3:
                             TextBox txb = new TextBox();
                             txb.ID = $"Mondai{i}";
+                            txb.TextMode = TextBoxMode.MultiLine;
                             this.plh.Controls.Add(txb);
                             break;
+                        case 4:
+                            TextBox txbsuzi = new TextBox();
+                            txbsuzi.ID = $"Mondai{i}";
+                            txbsuzi.TextMode = TextBoxMode.Number;
+                            this.plh.Controls.Add(txbsuzi);
+                            break;
+                        case 5:
+                            TextBox txbemail = new TextBox();
+                            txbemail.ID = $"Mondai{i}";
+                            txbemail.TextMode = TextBoxMode.Email;
+                            this.plh.Controls.Add(txbemail);
+                            break;
+                        case 6:
+                            TextBox txbdate = new TextBox();
+                            txbdate.ID = $"Mondai{i}";
+                            txbdate.TextMode = TextBoxMode.Date;
+                            this.plh.Controls.Add(txbdate);
+                            break;
+
+                    }
+                }
+
+                // 如果是從修改頁回來，則帶入值
+                Kiroku krk = (Kiroku)HttpContext.Current.Session["edit"];
+                if (krk != null)
+                {
+                    this.txbName.Text = krk.Name;
+                    this.txbPhone.Text = krk.Phone;
+                    this.txbEmail.Text = krk.Email;
+                    this.txbAge.Text = krk.Age.ToString();
+                    for (var i = 0; i < krk.KirokuList.Count; i++)
+                    {
+                        switch (krk.KirokuList[i].Type)
+                        {
+                            case 1:
+                                int check = 0;
+                                RadioButtonList rdb = (RadioButtonList)this.plh.FindControl($"Mondai{i}");
+                                for (var j = 0; j < this._qtll[i].NaiyoList.Count; j++)
+                                {
+                                    if (string.Compare(rdb.Items[j].Text, krk.KirokuList[i].Naiyo) == 0)
+                                    {
+                                        rdb.Items[j].Selected = true;
+                                        check = 1;
+                                    }
+                                    if (check == 1)
+                                        break;
+                                }
+                                break;
+                            case 2:
+                                CheckBoxList ckb = (CheckBoxList)this.plh.FindControl($"Mondai{i}");
+                                for (var j = 0; j < this._qtll[i].NaiyoList.Count; j++)
+                                {
+                                    for (var k = 0; k < krk.KirokuList[i].ckbNaiyo.Count; k++)
+                                    {
+                                        if (string.Compare(ckb.Items[j].Text, krk.KirokuList[i].ckbNaiyo[k])                == 0)
+                                        {
+                                            ckb.Items[j].Selected = true;
+                                        }
+                                    }
+                                }
+                                break;
+                            default:
+                                TextBox txb = (TextBox)this.plh.FindControl($"Mondai{i}");
+                                txb.Text = krk.KirokuList[i].Naiyo;
+                                break;
+                        }
                     }
                 }
             }
@@ -138,7 +210,7 @@ namespace DynamicQuestionnaire.FrontEnd
             // 取得動態控制項的值
             // 根據產生了幾個控制項 抓幾次值
             List<KirokuList> krkll = new List<KirokuList>();
-            for (var i = 0; i < this._qtll.Count; i ++)
+            for (var i = 0; i < this._qtll.Count; i++)
             {
                 KirokuList krkl = new KirokuList()
                 {
@@ -157,7 +229,7 @@ namespace DynamicQuestionnaire.FrontEnd
                             {
                                 if (rdb.Items[k].Selected == true)
                                 {
-                                    krkl.Naiyo = rdb.Items[k].Value;
+                                    krkl.Naiyo = rdb.Items[k].Text;
                                     krkll.Add(krkl);
                                     check = 1;
                                     break;
@@ -176,24 +248,25 @@ namespace DynamicQuestionnaire.FrontEnd
                             {
                                 if (ckb.Items[k].Selected == true)
                                 {
-                                    ckbl.Add(ckb.Items[k].Value);
+                                    ckbl.Add(ckb.Items[k].Text);
                                 }
                             }
                         }
                         krkl.ckbNaiyo = ckbl;
                         krkll.Add(krkl);
                         break;
-                    case 3:
+                    default:
                         TextBox txb = (TextBox)this.plh.FindControl($"Mondai{i}");
                         krkl.Naiyo = txb.Text;
                         krkll.Add(krkl);
                         break;
                 }
+                Chart
             }
             krk.KirokuList = krkll;
             HttpContext.Current.Session["Kiroku"] = krk;
 
-            string rsrd = $"ConfirmPage.aspx?ID={krk.KirokuID}";
+            string rsrd = $"ConfirmPage.aspx?ID={krk.QuestionID}";
             Response.Redirect(rsrd);
         }
     }

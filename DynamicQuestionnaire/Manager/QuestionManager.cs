@@ -13,7 +13,7 @@ namespace DynamicQuestionnaire.Manager
         // Type 1 單選方塊
         // Type 2 複選方塊
         // Type 3 文字方塊
-        
+
         public List<Question> GetQuestionList(int pageSize, int pageIndex, out int totalRows)
         {
             int skip = pageSize * (pageIndex - 1); // 計算跳頁數
@@ -77,7 +77,7 @@ namespace DynamicQuestionnaire.Manager
         /// <param name="pageIndex">頁數</param>
         /// <param name="totalRows">搜尋結果總數</param>
         /// <returns></returns>
-        public List<Question> GetQuestionList(string hosii,DateTime S,DateTime E, int pageSize, int pageIndex, out int totalRows)
+        public List<Question> GetQuestionList(string hosii, DateTime S, DateTime E, int pageSize, int pageIndex, out int totalRows)
         {
             int skip = pageSize * (pageIndex - 1); // 計算跳頁數
             if (skip < 0)
@@ -159,7 +159,7 @@ namespace DynamicQuestionnaire.Manager
                 Zyunban = (int)reader["Zyunban"],
             };
         }
-        public Question GetQuestion(Guid Questionid,out List<QuestionList> qtll)
+        public Question GetQuestion(Guid Questionid, out List<QuestionList> qtll)
         {
             string connectionString = ConfigHelper.GetConnectionString();
             string commandText =
@@ -272,6 +272,148 @@ namespace DynamicQuestionnaire.Manager
                 throw;
             }
         }
+        public void CreateKiroku(Kiroku krk)
+        {
+            List<Kiroku> krkl = this.GetKiroku(krk.QuestionID);
+            int Zyunban;
+            if (krkl.Count > 0)
+                Zyunban = krkl.Count + 1;
+            else
+                Zyunban = 1;
+            string connectionString = ConfigHelper.GetConnectionString();
+            string commandText =
+                $@"  INSERT INTO Kirokus
+                    (KirokuID, KirokuListID, QuestionID, QuestionListID, Name, Phone, Email, Age, Date, Zyunban)
+                    VALUES
+                    (@KirokuID, @KirokuListID, @QuestionID, @QuestionListID, @Name, @Phone, @Email, @Age, @Date, @Zyunban)
+                   ";
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    using (SqlCommand command = new SqlCommand(commandText, conn))
+                    {
+                        conn.Open();
+                        command.Parameters.AddWithValue(@"KirokuID", krk.KirokuID);
+                        command.Parameters.AddWithValue(@"KirokuListID", krk.KirokuListID);
+                        command.Parameters.AddWithValue(@"QuestionID", krk.QuestionID);
+                        command.Parameters.AddWithValue(@"QuestionListID", krk.QuestionListID);
+                        command.Parameters.AddWithValue(@"Name", krk.Name);
+                        command.Parameters.AddWithValue(@"Phone", krk.Phone);
+                        command.Parameters.AddWithValue(@"Email", krk.Email);
+                        command.Parameters.AddWithValue(@"Age", krk.Age);
+                        command.Parameters.AddWithValue(@"Date", krk.Date);
+                        command.Parameters.AddWithValue(@"Zyunban", Zyunban);
+                        command.ExecuteNonQuery();
 
+                    }
+                }
+                for (var i = 0; i < krk.KirokuList.Count; i++)
+                {
+                    this.CreateKirokuList(krk.KirokuList[i]);
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.WriteLog("QuestionManager.CreateKiroku", ex);
+                throw;
+            }
+        }
+        public void CreateKirokuList(KirokuList krkl)
+        {
+            string connectionString = ConfigHelper.GetConnectionString();
+            string commandText =
+                $@"  INSERT INTO KirokuList
+                    (KirokuListID, Title, Type, Naiyo)
+                    VALUES
+                    (@KirokuListID, @Title, @Type, @Naiyo)
+                   ";
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    using (SqlCommand command = new SqlCommand(commandText, conn))
+                    {
+                        conn.Open();
+                        switch (krkl.Type)
+                        {
+                            case 2:
+                                for (var i = 0; i < krkl.ckbNaiyo.Count; i++)
+                                {
+                                    command.Parameters.Clear();
+                                    command.Parameters.AddWithValue(@"KirokuListID", krkl.KirokuListID);
+                                    command.Parameters.AddWithValue(@"Title", krkl.Title);
+                                    command.Parameters.AddWithValue(@"Type", krkl.Type);
+                                    command.Parameters.AddWithValue(@"Naiyo", krkl.ckbNaiyo[i]);
+                                    command.ExecuteNonQuery();
+                                }
+                                break;
+                            default:
+                                command.Parameters.AddWithValue(@"KirokuListID", krkl.KirokuListID);
+                                command.Parameters.AddWithValue(@"Title", krkl.Title);
+                                command.Parameters.AddWithValue(@"Type", krkl.Type);
+                                command.Parameters.AddWithValue(@"Naiyo", krkl.Naiyo);
+                                command.ExecuteNonQuery();
+                                break;
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.WriteLog("QuestionManager.CreateKirokuList", ex);
+                throw;
+            }
+        }
+        public List<Kiroku> GetKiroku(Guid qtID)
+        {
+            string connectionStr = ConfigHelper.GetConnectionString();
+            string commandText =
+                @"
+                    SELECT * FROM Kirokus
+                    WHERE QuestionID = @QuestionID
+                ";
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(connectionStr))
+                {
+                    using (SqlCommand command = new SqlCommand(commandText, connection))
+                    {
+                        List<Kiroku> pointList = new List<Kiroku>();
+                        connection.Open();
+                        command.Parameters.AddWithValue("@QuestionID", qtID);
+                        SqlDataReader reader = command.ExecuteReader();
+
+                        while (reader.Read())
+                        {
+                            Kiroku po = this.BuildKirokuContent(reader);
+                            pointList.Add(po);
+                        }
+                        return pointList;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.WriteLog("QuestionManager.GetKiroku", ex);
+                throw;
+            }
+        }
+        private Kiroku BuildKirokuContent(SqlDataReader reader)
+        {
+            return new Kiroku()
+            {
+                KirokuID = (Guid)reader["KirokuID"],
+                KirokuListID = (Guid)reader["KirokuListID"],
+                QuestionID = (Guid)reader["QuestionID"],
+                QuestionListID = (Guid)reader["QuestionListID"],
+                Name = (string)reader["Name"],
+                Phone = (string)reader["Phone"],
+                Email = (string)reader["Email"],
+                Age = (int)reader["Age"],
+                Date = (DateTime)reader["Date"],
+                Zyunban = (int)reader["Zyunban"],
+            };
+        }
     }
 }

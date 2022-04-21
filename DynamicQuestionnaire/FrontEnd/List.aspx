@@ -9,16 +9,20 @@
 <head runat="server">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>前台-列表頁</title>
+    <link href="../CSS/bootstrap.css" rel="stylesheet" />
+    <script src="../JS/bootstrap.js"></script>
+    <script src="../JS/jquery.min.js"></script>
     <style>
         * {
-            background-color:#181717;
-            color:rgba(255, 248, 240, 0.93);
+            background-color: #181717;
+            color: rgba(255, 248, 240, 0.93);
         }
     </style>
 </head>
 <body>
     <form id="form1" runat="server">
         <asp:HiddenField runat="server" ID="hdf" />
+        <input type="hidden" id="msgmsg" class="msgmsg" runat="server" />
         <div>
             <asp:Literal runat="server" ID="ltl1" Text="問卷標題"></asp:Literal>
             <asp:TextBox runat="server" ID="txbT"></asp:TextBox><br />
@@ -48,7 +52,7 @@
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="問卷">
                         <ItemTemplate>
-                            <a runat="server" href='<%# "Form.aspx?ID="+Eval("QuestionID") %>' title='<%# "前往："+Eval("QName")+"問卷" %>'> 
+                            <a runat="server" href='<%# "Form.aspx?ID="+Eval("QuestionID") %>' title='<%# "前往："+Eval("QName")+"問卷" %>'>
                                 <asp:Literal runat="server" ID="ltlQuestion" Text='<%# Eval("QName") %>'></asp:Literal>
                             </a>
                         </ItemTemplate>
@@ -80,6 +84,12 @@
         </div>
         <uc1:Pager runat="server" ID="Pager" />
     </form>
-
+    <script>
+        $(document).ready(function () {
+            var msg = $(".msgmsg").val();
+            if (msg != undefined && msg != null && msg != "")
+                alert(msg);
+        });
+    </script>
 </body>
 </html>

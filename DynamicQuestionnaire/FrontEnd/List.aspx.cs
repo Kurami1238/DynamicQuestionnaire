@@ -48,6 +48,12 @@ namespace DynamicQuestionnaire.FrontEnd
                 this.Pager.PageIndex = pageIndex;
                 this.Pager.Bind("Caption", Caption);
             }
+            // 提示使用者訊息
+            if (HttpContext.Current.Session["Msg"] != null)
+            {
+                this.msgmsg.Value = HttpContext.Current.Session["Msg"].ToString();
+                HttpContext.Current.Session["Msg"] = null;
+            }
         }
 
         protected void btnS_Click(object sender, EventArgs e)

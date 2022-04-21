@@ -44,6 +44,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Web.DataVisualization" />
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
     <Reference Include="System.Web.ApplicationServices" />
@@ -67,10 +68,14 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="CSS\bootstrap.css" />
     <Content Include="FrontEnd\ConfirmPage.aspx" />
     <Content Include="FrontEnd\Form.aspx" />
     <Content Include="FrontEnd\List.aspx" />
+    <Content Include="FrontEnd\Stastic.aspx" />
     <Content Include="Global.asax" />
+    <Content Include="JS\bootstrap.js" />
+    <Content Include="JS\jquery.min.js" />
     <Content Include="ShareControls\Pager.ascx" />
     <Content Include="Web.config" />
   </ItemGroup>
@@ -95,6 +100,13 @@
     </Compile>
     <Compile Include="FrontEnd\List.aspx.designer.cs">
       <DependentUpon>List.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="FrontEnd\Stastic.aspx.cs">
+      <DependentUpon>Stastic.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="FrontEnd\Stastic.aspx.designer.cs">
+      <DependentUpon>Stastic.aspx</DependentUpon>
     </Compile>
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
