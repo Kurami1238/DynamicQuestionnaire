@@ -8,14 +8,16 @@ namespace DynamicQuestionnaire.Models
     public class Kiroku
     {
         public Guid KirokuID { get; set; }
-        public Guid QuestionID { get; set; }
         public Guid KirokuListID { get; set; }
+        public Guid QuestionID { get; set; }
+        public Guid QuestionListID { get; set; }
         public string Name { get; set; }
         public string Phone { get; set; }
         public string Email { get; set; }
         public int Age { get; set; }
         public DateTime Date { get; set; }
         public int Zyunban { get; set; }
+        public List<KirokuList> KirokuList { get; set; }
 
     }
 }

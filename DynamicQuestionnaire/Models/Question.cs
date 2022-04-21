@@ -9,6 +9,8 @@ namespace DynamicQuestionnaire.Models
     {
         public Guid QuestionID { get; set; }
         public Guid QuestionListID { get; set; }
+        public string QName { get; set; }
+        public string QSetume { get; set; }
         public DateTime DateStart { get; set; }
         public DateTime DateEnd { get; set; }
         public int State { get; set; }

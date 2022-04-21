@@ -10,7 +10,7 @@ namespace DynamicQuestionnaire.Models
         public Guid QuestionListID { get; set; }
         public string Title { get; set; }
         public int Type { get; set; }
-        public Guid NaiyoListID { get; set; }
-
+        public Guid? NaiyoListID { get; set; }
+        public List<NaiyoList> NaiyoList { get; set; }
     }
 }
