@@ -74,7 +74,7 @@
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="觀看統計">
                         <ItemTemplate>
-                            <a runat="server">
+                            <a runat="server" href='<%# "Stastic.aspx?ID="+Eval("QuestionID") %>' title='<%# "前往："+Eval("QName")+"問卷" %>'>
                                 <asp:Literal runat="server" ID="ltlsougou" Text="前往"></asp:Literal>
                             </a>
                         </ItemTemplate>

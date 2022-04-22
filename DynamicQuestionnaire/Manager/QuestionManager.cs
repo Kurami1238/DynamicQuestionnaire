@@ -349,6 +349,7 @@ namespace DynamicQuestionnaire.Manager
                                 }
                                 break;
                             default:
+                                command.Parameters.Clear();
                                 command.Parameters.AddWithValue(@"KirokuListID", krkl.KirokuListID);
                                 command.Parameters.AddWithValue(@"Title", krkl.Title);
                                 command.Parameters.AddWithValue(@"Type", krkl.Type);
@@ -379,7 +380,7 @@ namespace DynamicQuestionnaire.Manager
                 {
                     using (SqlCommand command = new SqlCommand(commandText, connection))
                     {
-                        List<Kiroku> pointList = new List<Kiroku>();
+                        List<Kiroku> krkl = new List<Kiroku>();
                         connection.Open();
                         command.Parameters.AddWithValue("@QuestionID", qtID);
                         SqlDataReader reader = command.ExecuteReader();
@@ -387,15 +388,175 @@ namespace DynamicQuestionnaire.Manager
                         while (reader.Read())
                         {
                             Kiroku po = this.BuildKirokuContent(reader);
-                            pointList.Add(po);
+                            krkl.Add(po);
                         }
-                        return pointList;
+                        return krkl;
                     }
                 }
             }
             catch (Exception ex)
             {
                 Logger.WriteLog("QuestionManager.GetKiroku", ex);
+                throw;
+            }
+        }
+        public List<Kiroku> GetKirokuWithStastic(Guid qtID)
+        {
+            string connectionStr = ConfigHelper.GetConnectionString();
+            string commandText =
+                @"
+                    SELECT * FROM Kirokus
+                    WHERE QuestionID = @QuestionID
+                ";
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(connectionStr))
+                {
+                    using (SqlCommand command = new SqlCommand(commandText, connection))
+                    {
+                        List<Kiroku> krkl = new List<Kiroku>();
+                        connection.Open();
+                        command.Parameters.AddWithValue("@QuestionID", qtID);
+                        SqlDataReader reader = command.ExecuteReader();
+
+                        while (reader.Read())
+                        {
+                            Kiroku krk = this.BuildKirokuContent(reader);
+                            // 整合KirokuList進krk
+                            List<KirokuList> krkll = this.GetKirokuList(krk.KirokuListID);
+                            krk.KirokuList = krkll;
+                            krkl.Add(krk);
+                        }
+                        return krkl;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.WriteLog("QuestionManager.GetKirokuWithStastic", ex);
+                throw;
+            }
+        }
+        public List<KirokuList> GetKirokuList(Guid klID)
+        {
+            string connectionStr = ConfigHelper.GetConnectionString();
+            string commandText =
+                @"
+                    SELECT * FROM KirokuList
+                    WHERE KirokuListID = @KirokuListID AND Type != 2
+                ";
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(connectionStr))
+                {
+                    using (SqlCommand command = new SqlCommand(commandText, connection))
+                    {
+                        List<KirokuList> krkll = new List<KirokuList>();
+                        connection.Open();
+                        command.Parameters.AddWithValue("@KirokuListID", klID);
+                        SqlDataReader reader = command.ExecuteReader();
+                        while (reader.Read())
+                        {
+                            KirokuList krkl = new KirokuList()
+                            {
+                                KirokuListID = (Guid)reader["KirokuListID"],
+                                Title = (string)reader["Title"],
+                                Type = (int)reader["Type"],
+                                Naiyo = (string)reader["Naiyo"],
+                            };
+                            krkll.Add(krkl);
+                        }
+                        // 因為去除了ckb的結果 需要先搜尋有多少ckb的題目 在一個一個加進來
+                        // 找目前是ckb且krklID為一樣的字串列
+                        List<string> sl = this.GetKirokuListckbTitle(klID);
+                        for (var i = 0; i < sl.Count; i++)
+                        {
+                            // 符合條件的新增一個krkl
+                            KirokuList krkl = this.GetKirokuListckb(klID, sl[i]);
+                            // 整合進上面未含Type = 2的LIST
+                            krkll.Add(krkl);
+                        }
+                        return krkll;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.WriteLog("QuestionManager.GetKirokuList", ex);
+                throw;
+            }
+        }
+        public List<string> GetKirokuListckbTitle(Guid klID)
+        {
+            string connectionStr = ConfigHelper.GetConnectionString();
+            string commandText =
+                @"
+                    SELECT DISTINCT Title 
+                    FROM KirokuList
+                    WHERE KirokuListID = @KirokuListID AND Type = 2
+                ";
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(connectionStr))
+                {
+                    using (SqlCommand command = new SqlCommand(commandText, connection))
+                    {
+                        List<string> sl = new List<string>();
+                        connection.Open();
+                        command.Parameters.AddWithValue("@KirokuListID", klID);
+                        SqlDataReader reader = command.ExecuteReader();
+                        while (reader.Read())
+                        {
+                            string s = (string)reader["Title"];
+                            sl.Add(s);
+                        }
+                        return sl;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.WriteLog("QuestionManager.GetKirokuListckbTitle", ex);
+                throw;
+            }
+        }
+        public KirokuList GetKirokuListckb(Guid klID,string Title)
+        {
+            string connectionStr = ConfigHelper.GetConnectionString();
+            string commandText =
+                @"
+                    SELECT * 
+                    FROM KirokuList
+                    WHERE KirokuListID = @KirokuListID AND Title = @Title
+                ";
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(connectionStr))
+                {
+                    using (SqlCommand command = new SqlCommand(commandText, connection))
+                    {
+                        List<string> ckbl = new List<string>();
+                        connection.Open();
+                        command.Parameters.AddWithValue("@KirokuListID", klID);
+                        command.Parameters.AddWithValue("@Title", Title);
+                        SqlDataReader reader = command.ExecuteReader();
+                        KirokuList krkl = new KirokuList();
+                        while (reader.Read())
+                        {
+                            krkl.KirokuListID = (Guid)reader["KirokuListID"];
+                            krkl.Title = (string)reader["Title"];
+                            krkl.Type = (int)reader["Type"];
+                            string ckb = (string)reader["Naiyo"];
+                            ckbl.Add(ckb);
+                        }
+                        krkl.ckbNaiyo = ckbl;
+                        return krkl;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.WriteLog("QuestionManager.GetKirokuListckb", ex);
                 throw;
             }
         }

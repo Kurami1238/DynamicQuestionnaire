@@ -261,7 +261,6 @@ namespace DynamicQuestionnaire.FrontEnd
                         krkll.Add(krkl);
                         break;
                 }
-                Chart
             }
             krk.KirokuList = krkll;
             HttpContext.Current.Session["Kiroku"] = krk;
