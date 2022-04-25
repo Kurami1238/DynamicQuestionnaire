@@ -71,6 +71,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="CSS\1.png" />
+    <Content Include="CSS\2.png" />
     <Content Include="CSS\bootstrap.css" />
     <Content Include="FrontEnd\ConfirmPage.aspx" />
     <Content Include="FrontEnd\Form.aspx" />
@@ -82,6 +84,8 @@
     <Content Include="JS\jquery.js" />
     <Content Include="JS\jquery.min.js" />
     <Content Include="JS\moment.min.js" />
+    <Content Include="RearEnd\Detail.aspx" />
+    <Content Include="RearEnd\List.aspx" />
     <Content Include="ShareControls\Pager.ascx" />
     <Content Include="Web.config" />
   </ItemGroup>
@@ -130,6 +134,20 @@
     <Compile Include="Models\QuestionList.cs" />
     <Compile Include="Models\QuestionListKazuandKiroku.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RearEnd\Detail.aspx.cs">
+      <DependentUpon>Detail.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="RearEnd\Detail.aspx.designer.cs">
+      <DependentUpon>Detail.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="RearEnd\List.aspx.cs">
+      <DependentUpon>List.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="RearEnd\List.aspx.designer.cs">
+      <DependentUpon>List.aspx</DependentUpon>
+    </Compile>
     <Compile Include="ShareControls\Pager.ascx.cs">
       <DependentUpon>Pager.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -148,9 +166,7 @@
       <DependentUpon>Web.config</DependentUpon>
     </None>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="RearEnd\" />
-  </ItemGroup>
+  <ItemGroup />
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>

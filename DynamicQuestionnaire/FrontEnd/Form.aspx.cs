@@ -29,16 +29,23 @@ namespace DynamicQuestionnaire.FrontEnd
                     this._qID = qID;
                     this._qtll = qtll;
                 }
-                if (DateTime.Compare(qt.DateEnd, DateTime.Now) > 0)
-                    this.State.Text = "投票中";
+                DateTime qtde = DateTime.MaxValue;
+                if (qt.DateEnd != null)
+                {
+                    DateTime.TryParse(qt.DateEnd.ToString(), out qtde);
+                    if (DateTime.Compare(qtde, DateTime.Now) > 0)
+                        this.State.Text = "投票中";
+                    else
+                        this.State.Text = "已結束";
+                }
                 else
-                    this.State.Text = "已結束";
-                this.Date.Text = $"{qt.DateStart}～{qt.DateEnd}";
+                    this.State.Text = "投票中";
+                this.Date.Text = $"{qt.DateStart}～{qtde}";
                 this.lblQname.Text = qt.QName;
                 this.lblQSetume.Text = qt.QSetume;
                 this.Total.Text = $"共{qtll.Count}個問題";
                 // State 1 = 開啟, State 2 = 關閉
-                if (DateTime.Compare(qt.DateStart, DateTime.Now) > 0 || DateTime.Compare(qt.DateEnd, DateTime.Now) < 0 || qt.State == 2)
+                if (DateTime.Compare(qt.DateStart, DateTime.Now) > 0 || DateTime.Compare(qtde, DateTime.Now) < 0 || qt.State == 2)
                 {
                     this.pnl.Enabled = false;
                     this.gogogo.Visible = false;
@@ -46,7 +53,7 @@ namespace DynamicQuestionnaire.FrontEnd
 
                 //this.plh.Controls.Clear(); // 清除生成的問卷控制項
                 // 根據有幾個問題動態生成幾項問題
-                // Type 1 = 單選方塊, Type 2 = 複選方塊, Type 3 = 文字方塊
+                // Type 1 = 單選方塊, Type 2 = 複選方塊, Type 3 = 文字方塊, 4=數字, 5=Email, 6=日期
                 for (var i = 0; i < qtll.Count; i++)
                 {
                     Label lbl = new Label();

@@ -46,17 +46,17 @@
                 "QID": hf,
             }
             
-            //$.ajax({
-            //    url: "/API/StasticHandler.ashx?Action=Stastic",
-            //    method: "POST",
-            //    data: postData,
-            //    dataType: "json",
-            //    success: Stastic,
-            //    error: function (henzi) {
-            //        console.log(henzi);
-            //        alert("通訊失敗，請聯絡管理員。")
-            //    }
-            //});
+            $.ajax({
+                url: "/API/StasticHandler.ashx?Action=Stastic",
+                method: "POST",
+                data: postData,
+                dataType: "json",
+                success: Stastic,
+                error: function (henzi) {
+                    console.log(henzi);
+                    alert("通訊失敗，請聯絡管理員。")
+                }
+            });
         });
         function Stastic(henzi) {
             var ctx = $('#Question');

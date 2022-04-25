@@ -2,6 +2,7 @@
 using DynamicQuestionnaire.Models;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Web;
 using System.Web.UI;
@@ -81,34 +82,48 @@ namespace DynamicQuestionnaire.FrontEnd
             }
             // 生成統計圖
 
-            for (var i = 0; i < _qtll.Count; i++)
-            {
-                string Namae = $"sr{i}";
-                for (var j = 0; j < qtlKandKl[i].KazuandKiroku.Count; j++)
-                {
-                    switch (_qtll[i].Type)
-                    {
-                        case 1:
-                            Series sr = new Series();
-                            sr.Name = Namae;
-                            sr.ChartType = SeriesChartType.Pie;
-                            sr.Points.DataBind(qtlKandKl[i].KazuandKiroku, $"{qtlKandKl[i].KazuandKiroku[j].Naiyo}", $"{qtlKandKl[i].KazuandKiroku[j].Kazu}", $"LegendText={qtlKandKl[i].KazuandKiroku[j].Naiyo},YValues={qtlKandKl[i].KazuandKiroku[j].Kazu},ToolTip={qtlKandKl[i].KazuandKiroku[j].Kazu}");
-                            sr.ToolTip = "#LEGENDTEXT: #VAL";
-                            Chart ct = new Chart();
-                            ct.Series.Add(sr);
-                            ChartArea cta = new ChartArea();
-                            cta.Area3DStyle.Enable3D = true;
-                            ct.ChartAreas.Add(cta);
-                            this.phl.Controls.Add(ct);
-                            break;
-                        case 2:
-                            break;
-                        default:
-                            break;
-                    }
-                }
+            //for (var i = 0; i < _qtll.Count; i++)
+            //{
+            //    string Namae = $"sr{i}";
+            //    for (var j = 0; j < qtlKandKl[i].KazuandKiroku.Count; j++)
+            //    {
+            //        switch (_qtll[i].Type)
+            //        {
+            //            case 1:
+            //                Series sr = new Series();
+            //                DataTable dt = new DataTable();
+            //                dt.Clear();
+            //                dt.Columns.Add("Naiyo");
+            //                dt.Columns.Add("Kazu");
+            //                foreach (var item in qtlKandKl[i].KazuandKiroku)
+            //                {
+            //                    DataRow dr = dt.NewRow();
+            //                    dr["Naiyo"] = item.Naiyo;
+            //                    dr["Kazu"] = item.Kazu;
+            //                    dt.Rows.Add(dr);
+            //                }
+            //                sr.Points.DataBind(
+            //                    dt.DefaultView,
+            //                    "Naiyo","Kazu","LegendText=Naiyo,YValues=Kazu,ToolTip=Kazu");
+            //                sr.Name = Namae;
+            //                sr.ChartType = SeriesChartType.Pie;
+            //                //sr.Points.DataBind(qtlKandKl[i].KazuandKiroku, $"{qtlKandKl[i].KazuandKiroku[j].Naiyo}", $"{qtlKandKl[i].KazuandKiroku[j].Kazu}", $"LegendText={qtlKandKl[i].KazuandKiroku[j].Naiyo},YValues={qtlKandKl[i].KazuandKiroku[j].Kazu},ToolTip={qtlKandKl[i].KazuandKiroku[j].Kazu}");
+            //                sr.ToolTip = "#LEGENDTEXT: #VAL";
+            //                Chart ct = new Chart();
+            //                ct.Series.Add(sr);
+            //                ChartArea cta = new ChartArea();
+            //                cta.Area3DStyle.Enable3D = true;
+            //                ct.ChartAreas.Add(cta);
+            //                this.phl.Controls.Add(ct);
+            //                break;
+            //            case 2:
+            //                break;
+            //            default:
+            //                break;
+            //        }
+            //    }
 
-            }
+            //}
         }
 
     }

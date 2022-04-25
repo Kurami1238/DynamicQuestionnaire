@@ -145,6 +145,60 @@ namespace DynamicQuestionnaire.Manager
                 throw;
             }
         }
+        public List<Question> GetQuestionList(List<string> zyunbanList,out List<Question> qtlx)
+        {
+            string connectionString = ConfigHelper.GetConnectionString();
+            string zyouken = "";
+            for (var i = 0; i < zyunbanList.Count; i++)
+            {
+                if (i != zyunbanList.Count - 1)
+                    zyouken += $" (Zyunban = @{i}) OR";
+                else
+                    zyouken += $" (Zyunban = @{i}) ";
+            }
+            string commandText =
+                $@" SELECT *
+                    FROM Questions
+                    WHERE {zyouken}";
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    using (SqlCommand command = new SqlCommand(commandText, conn))
+                    {
+                        for (var i = 0; i < zyunbanList.Count; i++)
+                        {
+                            command.Parameters.AddWithValue($"@{i}", zyunbanList[i]);
+                        }
+                        conn.Open();
+                        List<Question> qtl = new List<Question>();
+                        SqlDataReader reader = command.ExecuteReader();
+                        while (reader.Read())
+                        {
+                            Question qt = this.BuildQuestionListContent(reader);
+                            qtl.Add(qt);
+                        }
+                        qtlx = new List<Question>();
+                        for (var i = 0; i < qtl.Count; i++)
+                        {
+                            List<Kiroku> krkl = this.GetKiroku(qtl[i].QuestionID);
+                            if (krkl.Count > 0)
+                            {
+                                qtl[i].NowKirokusu = krkl.Count;
+                                qtlx.Add(qtl[i]);
+                            }
+                        }
+                        return qtl;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.WriteLog("QuestionManager.GetQuestionList", ex);
+                throw;
+            }
+        }
+        
         private Question BuildQuestionListContent(SqlDataReader reader)
         {
             return new Question()
@@ -154,10 +208,45 @@ namespace DynamicQuestionnaire.Manager
                 QName = (string)reader["QName"],
                 QSetume = (string)reader["QSetume"],
                 DateStart = (DateTime)reader["DateStart"],
-                DateEnd = (DateTime)reader["DateEnd"],
+                DateEnd = reader["DateEnd"] as DateTime?,
                 State = (int)reader["State"],
                 Zyunban = (int)reader["Zyunban"],
             };
+        }
+        public void DeleteQuestion(List<Question> qtl)
+        {
+            string zyouken = "";
+            for (var i = 0; i < qtl.Count; i++)
+            {
+                if (i != qtl.Count - 1)
+                    zyouken += $" (QuestionID = @{i}) OR";
+                else
+                    zyouken += $" (QuestionID = @{i}) ";
+            }
+            string connectionString = ConfigHelper.GetConnectionString();
+            string commandText =
+                $@" DELETE FROM Questions
+                    WHERE {zyouken} ";
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    using (SqlCommand command = new SqlCommand(commandText, connection))
+                    {
+                        connection.Open();
+                        for (var i = 0; i < qtl.Count; i++)
+                        {
+                            command.Parameters.AddWithValue($@"{i}", qtl[i].QuestionID);
+                        }
+                        command.ExecuteNonQuery();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.WriteLog("QuestionManager.DeleteQuestion", ex);
+                throw;
+            }
         }
         public Question GetQuestion(Guid Questionid, out List<QuestionList> qtll)
         {
@@ -192,6 +281,7 @@ namespace DynamicQuestionnaire.Manager
                 throw;
             }
         }
+
         public List<QuestionList> GetQuestionListNaiyoList(Guid QuestionListid)
         {
             string connectionString = ConfigHelper.GetConnectionString();

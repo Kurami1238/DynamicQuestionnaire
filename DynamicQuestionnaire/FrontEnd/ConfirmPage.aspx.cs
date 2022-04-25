@@ -30,11 +30,18 @@ namespace DynamicQuestionnaire.FrontEnd
                 this._qID = qID;
                 this._qtll = qtll;
             }
-            if (DateTime.Compare(qt.DateEnd, DateTime.Now) > 0)
-                this.State.Text = "投票中";
+            DateTime qtde = DateTime.MaxValue;
+            if (qt.DateEnd != null)
+            {
+                DateTime.TryParse(qt.DateEnd.ToString(), out qtde);
+                if (DateTime.Compare(qtde, DateTime.Now) > 0)
+                    this.State.Text = "投票中";
+                else
+                    this.State.Text = "已結束";
+            }
             else
-                this.State.Text = "已結束";
-            this.Date.Text = $"{qt.DateStart}～{qt.DateEnd}";
+                this.State.Text = "投票中";
+            this.Date.Text = $"{qt.DateStart}～{qtde}";
             this.lblQname.Text = qt.QName;
             this.lblQSetume.Text = qt.QSetume;
             this.ltlName.Text = krk.Name;
