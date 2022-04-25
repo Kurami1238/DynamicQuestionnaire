@@ -22,6 +22,7 @@
             <div class="hidari col-sm-3 col-md-3 col-lg-3">
             </div>
             <div class="migi col-sm-8 col-md-8 col-lg-8">
+                    <input type="hidden" id="changetab" class="changetab" runat="server"/>
                 <nav>
                     <div class="nav nav-tabs" id="nav-tab" role="tablist">
                         <button class="nav-link active" id="nav-question-tab" data-bs-toggle="tab" data-bs-target="#nav-question" type="button" role="tab" aria-controls="nav-question" aria-selected="true">問卷</button>
@@ -34,9 +35,10 @@
                     <div class="tab-pane fade show active" id="nav-question" role="tabpanel" aria-labelledby="nav-question-tab">
                         <asp:Literal runat="server" Text="問卷名稱"></asp:Literal><asp:TextBox runat="server" ID="txbQname"></asp:TextBox><br />
                         <asp:Literal runat="server" Text="描述內容"></asp:Literal><asp:TextBox runat="server" ID="txbQsetume" TextMode="MultiLine"></asp:TextBox><br />
-                        <asp:Literal runat="server" Text="開始時間"></asp:Literal><asp:TextBox runat="server" ID="txbS" TextMode="Date" ></asp:TextBox><br />
-                        <asp:Literal runat="server" Text="結束時間"></asp:Literal><asp:TextBox runat="server" ID="txbE" TextMode="Date"></asp:TextBox><br />
-                        <asp:CheckBox runat="server" ID="ckbState" Checked="true" /><br />
+                        <asp:Literal runat="server" Text="開始時間"></asp:Literal><asp:TextBox runat="server" ID="txbS" TextMode="DateTime" ></asp:TextBox><br />
+                        <asp:Literal runat="server" Text="結束時間"></asp:Literal><asp:TextBox runat="server" ID="txbE" TextMode="DateTime"></asp:TextBox><br />
+                        <asp:CheckBox runat="server" ID="ckbState" Checked="true" Text="已啟用" /><br />
+                        <asp:Literal runat="server" ID="ltlquestionmsg"></asp:Literal><br />
                         <asp:Button runat="server" ID="cancer" Text="取消" OnClick="cancer_Click" />
                         <asp:Button runat="server" ID="gogogo" Text="送出" OnClick="gogogo_Click" />
                     </div>
@@ -54,11 +56,13 @@
                             <asp:ListItem Text="Email" Value="5"></asp:ListItem>
                             <asp:ListItem Text="日期" Value="6"></asp:ListItem>
                         </asp:DropDownList>
-                        <asp:CheckBox runat="server" ID="ckbhituyou" /><asp:Literal runat="server" Text="必填"></asp:Literal><br />
+                        <asp:CheckBox runat="server" ID="ckbhituyou" Checked="true" /><asp:Literal runat="server" Text="必填"></asp:Literal><br />
+                        <asp:PlaceHolder runat="server" ID="ph" Visible='<%# this.ddlType.SelectedValue == "1" ? true : this.ddlType.SelectedValue == "2" ? true : false %>'>
                         <asp:Literal runat="server" Text="回答"></asp:Literal><asp:TextBox runat="server" ID="txbNaiyo"></asp:TextBox><asp:Literal runat="server" Text="多個答案以;分隔"></asp:Literal>
-                        <asp:Button runat="server" ID="btngogo" Text="加入" />
-                        <asp:ImageButton class="imgbtn" ID="btnDelete" runat="server" ImageUrl="../CSS/1.png" Height="30px" Width="30px" OnClick="btnDelete_Click" />
-                        <asp:GridView runat="server" ID="gv" CellPadding="4" ForeColor="#333333" GridLines="None" AutoGenerateColumns="False">
+                            </asp:PlaceHolder>
+                        <asp:Button runat="server" ID="btnCreateMondai" Text="加入" OnClick="btnCreateMondai_Click" /><br />
+                        <asp:ImageButton class="imgbtn" ID="btnDeleteMondai" runat="server" ImageUrl="../CSS/1.png" Height="30px" Width="30px" OnClick="btnDeleteMondai_Click" /><br />
+                        <asp:GridView runat="server" ID="gv" CellPadding="4" ForeColor="#333333" GridLines="None" AutoGenerateColumns="False" OnRowCommand="gv_RowCommand">
                             <AlternatingRowStyle BackColor="White" />
                             <EditRowStyle BackColor="#7C6F57" />
                             <FooterStyle BackColor="#1C5E55" Font-Bold="True" ForeColor="White" />
@@ -83,18 +87,29 @@
                                 </asp:TemplateField>
                                 <asp:TemplateField HeaderText="問題">
                                     <ItemTemplate>
-                                        <a runat="server" href='<%# "Detail.aspx?ID="+Eval("QuestionID") %>' title='<%# "前往："+Eval("QName")+"問卷管理" %>'>
-                                            <asp:Literal runat="server" ID="ltlQuestion" Text='<%# Eval("QName") %>'></asp:Literal>
-                                        </a>
+                                            <asp:Literal runat="server" ID="ltlTitle" Text='<%# Eval("Title") %>'></asp:Literal>
                                     </ItemTemplate>
                                 </asp:TemplateField>
                                 <asp:TemplateField HeaderText="種類">
                                     <ItemTemplate>
-                                        <asp:Literal runat="server" ID="ltlState" Text='<%# Eval("Type").ToString() == "1" ? "單選方塊" : Eval("Type").ToString() == "2" ? "多選方塊" : Eval("Type").ToString() == "3" ? "文字" : Eval("Type").ToString() == "4" ? "數字" : Eval("Type").ToString() == "5" ? "Email" : "日期" %>'></asp:Literal>
+                                        <asp:Literal runat="server" ID="ltlType" Text='<%# Eval("Type").ToString() == "1" ? "單選方塊" : Eval("Type").ToString() == "2" ? "多選方塊" : Eval("Type").ToString() == "3" ? "文字" : Eval("Type").ToString() == "4" ? "數字" : Eval("Type").ToString() == "5" ? "Email" : "日期" %>'></asp:Literal>
+                                    </ItemTemplate>
+                                </asp:TemplateField>
+                                <asp:TemplateField HeaderText="必填">
+                                    <ItemTemplate>
+                                        <asp:CheckBox runat="server" ID="ckbZettai" Checked='<%# Eval("Zettai").ToString() == "1" ? true : false %>'/>
+                                    </ItemTemplate>
+                                </asp:TemplateField>
+                                <asp:TemplateField>
+                                    <ItemTemplate>
+                                        <asp:Button runat="server" ID="btnEdit" Text="編輯" CommandName="btnEdit" CommandArgument='<%# Eval("NaiyoListID") %>' />
                                     </ItemTemplate>
                                 </asp:TemplateField>
                             </Columns>
                         </asp:GridView>
+                        <asp:Literal runat="server" ID="ltlmondaimsg" ></asp:Literal>
+                        <asp:Button runat="server" ID="btnCancerMondai" Text="取消" OnClick="btnCancerMondai_Click" />
+                        <asp:Button runat="server" ID="btnMondaigogogo" Text="送出" OnClick="btnMondaigogogo_Click" />
                     </div>
                     <div class="tab-pane fade" id="nav-siryou" role="tabpanel" aria-labelledby="nav-siryou-tab">
                     </div>
@@ -106,6 +121,38 @@
         </div>
     </form>
     <script>
-</script>
+        $(document).ready(function () {
+            var name = $('.changetab').val;
+            console.log(name);
+            if (name != undefined && name != null && name != "") {
+                var triggerTabList = [].slice.call(document.querySelectorAll(`#${name} a`))
+                triggerTabList.forEach(function (triggerEl) {
+                    var tabTrigger = new bootstrap.Tab(triggerEl)
+                    triggerEl.addEventListener('click', function (event) {
+                        event.preventDefault()
+                        tabTrigger.show()
+                    })
+                })
+                //var triggerEl = document.querySelector(`#${name} a[href="#${name}"]`);
+                //bootstrap.Tab.getInstance(triggerEl).show()
+            };
+        });
+        //var name = $('.changetab').val;
+       /* var tabName = $("[id*=TabName]").val() != "" ? $("[id=TabName]").val() : "nav-mondai";*/
+        //$('#Tabs a[href="#' + name + '"]').tab('show');
+        //if ($(".changetab").val() == "" || tabName == "nav-mondai") {
+        //    $("#nav-mondai").addClass('active').addClass('show');
+        //}
+
+        //$("#Tabs a").click(function () {
+        //    $(".changetab").val($(this).attr("href").replace("#", ""));
+        //});
+        //$('.changetab').change(function () {
+        //    var name = $('.changetab').val;
+        //    console.log(name);
+        //    var triggerEl = document.querySelector(`#${name} a[href="#${name}"]`);
+        //    bootstrap.Tab.getInstance(triggerEl).show()
+        //});
+    </script>
 </body>
 </html>

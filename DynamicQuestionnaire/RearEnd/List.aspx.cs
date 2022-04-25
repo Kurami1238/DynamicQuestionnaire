@@ -178,6 +178,10 @@ namespace DynamicQuestionnaire.RearEnd
             Response.Redirect(url);
         }
 
-        
+        protected void btndlcancer_Click(object sender, EventArgs e)
+        {
+            string url = this.Request.Url.LocalPath;
+            Response.Redirect(url);
+        }
     }
 }

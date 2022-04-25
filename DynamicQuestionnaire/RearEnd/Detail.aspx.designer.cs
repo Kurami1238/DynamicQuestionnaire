@@ -24,6 +24,15 @@ namespace DynamicQuestionnaire.RearEnd
         protected global::System.Web.UI.HtmlControls.HtmlForm form1;
 
         /// <summary>
+        /// changetab 控制項。
+        /// </summary>
+        /// <remarks>
+        /// 自動產生的欄位。
+        /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlInputHidden changetab;
+
+        /// <summary>
         /// txbQname 控制項。
         /// </summary>
         /// <remarks>
@@ -67,6 +76,15 @@ namespace DynamicQuestionnaire.RearEnd
         /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
         /// </remarks>
         protected global::System.Web.UI.WebControls.CheckBox ckbState;
+
+        /// <summary>
+        /// ltlquestionmsg 控制項。
+        /// </summary>
+        /// <remarks>
+        /// 自動產生的欄位。
+        /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Literal ltlquestionmsg;
 
         /// <summary>
         /// cancer 控制項。
@@ -123,6 +141,15 @@ namespace DynamicQuestionnaire.RearEnd
         protected global::System.Web.UI.WebControls.CheckBox ckbhituyou;
 
         /// <summary>
+        /// ph 控制項。
+        /// </summary>
+        /// <remarks>
+        /// 自動產生的欄位。
+        /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.PlaceHolder ph;
+
+        /// <summary>
         /// txbNaiyo 控制項。
         /// </summary>
         /// <remarks>
@@ -132,22 +159,22 @@ namespace DynamicQuestionnaire.RearEnd
         protected global::System.Web.UI.WebControls.TextBox txbNaiyo;
 
         /// <summary>
-        /// btngogo 控制項。
+        /// btnCreateMondai 控制項。
         /// </summary>
         /// <remarks>
         /// 自動產生的欄位。
         /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btngogo;
+        protected global::System.Web.UI.WebControls.Button btnCreateMondai;
 
         /// <summary>
-        /// btnDelete 控制項。
+        /// btnDeleteMondai 控制項。
         /// </summary>
         /// <remarks>
         /// 自動產生的欄位。
         /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
         /// </remarks>
-        protected global::System.Web.UI.WebControls.ImageButton btnDelete;
+        protected global::System.Web.UI.WebControls.ImageButton btnDeleteMondai;
 
         /// <summary>
         /// gv 控制項。
@@ -157,5 +184,32 @@ namespace DynamicQuestionnaire.RearEnd
         /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
         /// </remarks>
         protected global::System.Web.UI.WebControls.GridView gv;
+
+        /// <summary>
+        /// ltlmondaimsg 控制項。
+        /// </summary>
+        /// <remarks>
+        /// 自動產生的欄位。
+        /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Literal ltlmondaimsg;
+
+        /// <summary>
+        /// btnCancerMondai 控制項。
+        /// </summary>
+        /// <remarks>
+        /// 自動產生的欄位。
+        /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnCancerMondai;
+
+        /// <summary>
+        /// btnMondaigogogo 控制項。
+        /// </summary>
+        /// <remarks>
+        /// 自動產生的欄位。
+        /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnMondaigogogo;
     }
 }

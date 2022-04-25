@@ -145,7 +145,7 @@ namespace DynamicQuestionnaire.Manager
                 throw;
             }
         }
-        public List<Question> GetQuestionList(List<string> zyunbanList,out List<Question> qtlx)
+        public List<Question> GetQuestionList(List<string> zyunbanList, out List<Question> qtlx)
         {
             string connectionString = ConfigHelper.GetConnectionString();
             string zyouken = "";
@@ -198,21 +198,6 @@ namespace DynamicQuestionnaire.Manager
                 throw;
             }
         }
-        
-        private Question BuildQuestionListContent(SqlDataReader reader)
-        {
-            return new Question()
-            {
-                QuestionID = (Guid)reader["QuestionID"],
-                QuestionListID = (Guid)reader["QuestionListID"],
-                QName = (string)reader["QName"],
-                QSetume = (string)reader["QSetume"],
-                DateStart = (DateTime)reader["DateStart"],
-                DateEnd = reader["DateEnd"] as DateTime?,
-                State = (int)reader["State"],
-                Zyunban = (int)reader["Zyunban"],
-            };
-        }
         public void DeleteQuestion(List<Question> qtl)
         {
             string zyouken = "";
@@ -248,13 +233,254 @@ namespace DynamicQuestionnaire.Manager
                 throw;
             }
         }
+        public void UpdateQuestion(Question qt, List<QuestionList> qtll)
+        {
+            // 先刪除問卷問題，再新增回來
+            this.DeleteQuestionList(qtll);
+            string connectionString = ConfigHelper.GetConnectionString();
+            string commandText =
+                $@" UPDATE Questions
+                    SET
+                        DateStart = @DateStart, DateEnd = @DateEnd, 
+                        State = @State, Zyunban = @Zyunban, 
+                        QName =  @QName, QSetume = @QSetume
+                    WHERE QuestionID = @QuestionID
+                   ";
+            if (qt.DateEnd == null)
+                commandText =
+                $@" UPDATE Questions
+                    SET
+                        DateStart = @DateStart, 
+                        State = @State, Zyunban = @Zyunban, 
+                        QName =  @QName, QSetume = @QSetume
+                    WHERE QuestionID = @QuestionID
+                   ";
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    using (SqlCommand command = new SqlCommand(commandText, conn))
+                    {
+                        conn.Open();
+                        command.Parameters.AddWithValue(@"QuestionID", qt.QuestionID);
+                        command.Parameters.AddWithValue(@"DateStart", qt.DateStart);
+                        if (qt.DateEnd != null)
+                            command.Parameters.AddWithValue(@"DateEnd", qt.DateEnd);
+                        command.Parameters.AddWithValue(@"State", qt.State);
+                        command.Parameters.AddWithValue(@"Zyunban", qt.Zyunban);
+                        command.Parameters.AddWithValue(@"QName", qt.QName);
+                        command.Parameters.AddWithValue(@"QSetume", qt.QSetume);
+                        command.ExecuteNonQuery();
+                    }
+                }
+                for (var i = 0; i < qtll.Count; i++)
+                {
+                    this.CreateQuestionList(qtll[i]);
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.WriteLog("QuestionManager.UpdateQuestion", ex);
+                throw;
+            }
+        }
+        public void CreateQuestion(Question qt, List<QuestionList> qtll)
+        {
+            List<Question> qtl = this.GetQuestionList(10, 1, out int totalRows);
+            string connectionString = ConfigHelper.GetConnectionString();
+            string commandText =
+                $@" INSERT INTO Questions
+                    (QuestionID, QuestionListID, DateStart, DateEnd, State, Zyunban, QName, QSetume)
+                    VALUES
+                    (@QuestionID, @QuestionListID, @DateStart, @DateEnd, @State, @Zyunban, @QName, @QSetume)
+                   ";
+            if (qt.DateEnd == null)
+                commandText =
+                $@" INSERT INTO Questions
+                    (QuestionID, QuestionListID, DateStart, State, Zyunban, QName, QSetume)
+                    VALUES
+                    (@QuestionID, @QuestionListID, @DateStart, @State, @Zyunban, @QName, @QSetume)
+                   ";
+            int maxsu = 0;
+            for (var i = 0; i < qtl.Count; i++)
+            {
+                if (qtl[i].Zyunban > maxsu)
+                    maxsu = qtl[i].Zyunban;
+            }
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    using (SqlCommand command = new SqlCommand(commandText, conn))
+                    {
+                        conn.Open();
+                        command.Parameters.AddWithValue(@"QuestionID", qt.QuestionID);
+                        command.Parameters.AddWithValue(@"QuestionListID", qt.QuestionListID);
+                        command.Parameters.AddWithValue(@"DateStart", qt.DateStart);
+                        if (qt.DateEnd != null)
+                            command.Parameters.AddWithValue(@"DateEnd", qt.DateEnd);
+                        command.Parameters.AddWithValue(@"State", qt.State);
+                        command.Parameters.AddWithValue(@"Zyunban", maxsu + 1);
+                        command.Parameters.AddWithValue(@"QName", qt.QName);
+                        command.Parameters.AddWithValue(@"QSetume", qt.QSetume);
+                        command.ExecuteNonQuery();
+                    }
+                }
+                for (var i = 0; i < qtll.Count; i++)
+                {
+                    this.CreateQuestionList(qtll[i]);
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.WriteLog("QuestionManager.CreateQuestion", ex);
+                throw;
+            }
+        }
+        public void CreateQuestionList(QuestionList qtl)
+        {
+            string connectionString = ConfigHelper.GetConnectionString();
+            string commandText =
+                $@" INSERT INTO QuestionList
+                    (QuestionListID, Title ,Type ,NaiyoListID, Zyunban, Zettai)
+                    VALUES
+                    (@QuestionListID, @Title ,@Type ,@NaiyoListID, @Zyunban, @Zettai)
+                   ";
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    using (SqlCommand command = new SqlCommand(commandText, conn))
+                    {
+                        conn.Open();
+                        command.Parameters.AddWithValue(@"QuestionListID", qtl.QuestionListID);
+                        command.Parameters.AddWithValue(@"Title", qtl.Title);
+                        command.Parameters.AddWithValue(@"Type", qtl.Type);
+                        command.Parameters.AddWithValue(@"NaiyoListID", qtl.NaiyoListID);
+                        command.Parameters.AddWithValue(@"Zyunban", qtl.Zyunban);
+                        command.Parameters.AddWithValue(@"Zettai", qtl.Zettai);
+                        command.ExecuteNonQuery();
+                    }
+                }
+                for (var i = 0; i < qtl.NaiyoList.Count; i++)
+                {
+                    this.CreateNaiyoList(qtl.NaiyoList[i]);
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.WriteLog("QuestionManager.CreateQuestionList", ex);
+                throw;
+            }
+        }
+        public void CreateNaiyoList(NaiyoList nyl)
+        {
+            string connectionString = ConfigHelper.GetConnectionString();
+            string commandText =
+                $@" INSERT INTO NaiyoList
+                    (NaiyoListID, Naiyo)
+                    VALUES
+                    (@NaiyoListID, @Naiyo)
+                   ";
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    using (SqlCommand command = new SqlCommand(commandText, conn))
+                    {
+                        conn.Open();
+                        command.Parameters.AddWithValue(@"NaiyoListID", nyl.NaiyoListID); ;
+                        command.Parameters.AddWithValue(@"Naiyo", nyl.Naiyo);
+                        command.ExecuteNonQuery();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.WriteLog("QuestionManager.CreateNaiyoList", ex);
+                throw;
+            }
+        }
+        public void DeleteQuestionList(List<QuestionList> qtll)
+        {
+            string zyouken = "";
+            for (var i = 0; i < qtll.Count; i++)
+            {
+                if (i != qtll.Count - 1)
+                    zyouken += $" (QuestionListID = @{i}) OR";
+                else
+                    zyouken += $" (QuestionListID = @{i}) ";
+                // 先刪除問題的資料
+                this.DeleteNaiyoList(qtll[i].NaiyoList);
+            }
+            string connectionString = ConfigHelper.GetConnectionString();
+            string commandText =
+                $@" DELETE FROM QuestionList
+                    WHERE {zyouken}";
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    using (SqlCommand command = new SqlCommand(commandText, connection))
+                    {
+                        connection.Open();
+                        for (var i = 0; i < qtll.Count; i++)
+                        {
+                            command.Parameters.AddWithValue($@"{i}", qtll[i].QuestionListID);
+                        }
+                        command.ExecuteNonQuery();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.WriteLog("QuestionManager.DeleteQuestionList", ex);
+                throw;
+            }
+        }
+        public void DeleteNaiyoList(List<NaiyoList> nyll)
+        {
+            string zyouken = "";
+            for (var i = 0; i < nyll.Count; i++)
+            {
+                if (i != nyll.Count - 1)
+                    zyouken += $" (NaiyoListID = @{i}) OR";
+                else
+                    zyouken += $" (NaiyoListID = @{i}) ";
+            }
+            string connectionString = ConfigHelper.GetConnectionString();
+            string commandText =
+                $@" DELETE FROM NaiyoList
+                    WHERE {zyouken} ";
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    using (SqlCommand command = new SqlCommand(commandText, connection))
+                    {
+                        connection.Open();
+                        for (var i = 0; i < nyll.Count; i++)
+                        {
+                            command.Parameters.AddWithValue($@"{i}", nyll[i].NaiyoListID);
+                        }
+                        command.ExecuteNonQuery();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.WriteLog("QuestionManager.DeleteNaiyoList", ex);
+                throw;
+            }
+        }
         public Question GetQuestion(Guid Questionid, out List<QuestionList> qtll)
         {
             string connectionString = ConfigHelper.GetConnectionString();
             string commandText =
                 @"  SELECT *
                     FROM Questions
-                    WHERE QuestionID = @QuestionID";
+                    WHERE QuestionID = @QuestionID
+                ";
             try
             {
                 using (SqlConnection conn = new SqlConnection(connectionString))
@@ -281,14 +507,15 @@ namespace DynamicQuestionnaire.Manager
                 throw;
             }
         }
-
         public List<QuestionList> GetQuestionListNaiyoList(Guid QuestionListid)
         {
             string connectionString = ConfigHelper.GetConnectionString();
             string commandText =
                 @"  SELECT *
                     FROM QuestionList
-                    WHERE QuestionListID = @QuestionListID";
+                    WHERE QuestionListID = @QuestionListID
+                    ORDER BY Zyunban
+                ";
             try
             {
                 using (SqlConnection conn = new SqlConnection(connectionString))
@@ -307,6 +534,8 @@ namespace DynamicQuestionnaire.Manager
                                 Title = (string)reader["Title"],
                                 Type = (int)reader["Type"],
                                 NaiyoListID = reader["NaiyoListID"] as Guid?,
+                                Zyunban = (int)reader["Zyunban"],
+                                Zettai = (int)reader["Zettai"],
                             };
                             Guid nlID = Guid.Empty;
                             if (qtl.NaiyoListID != null)
@@ -610,7 +839,7 @@ namespace DynamicQuestionnaire.Manager
                 throw;
             }
         }
-        public KirokuList GetKirokuListckb(Guid klID,string Title)
+        public KirokuList GetKirokuListckb(Guid klID, string Title)
         {
             string connectionStr = ConfigHelper.GetConnectionString();
             string commandText =
@@ -649,6 +878,20 @@ namespace DynamicQuestionnaire.Manager
                 Logger.WriteLog("QuestionManager.GetKirokuListckb", ex);
                 throw;
             }
+        }
+        private Question BuildQuestionListContent(SqlDataReader reader)
+        {
+            return new Question()
+            {
+                QuestionID = (Guid)reader["QuestionID"],
+                QuestionListID = (Guid)reader["QuestionListID"],
+                QName = (string)reader["QName"],
+                QSetume = (string)reader["QSetume"],
+                DateStart = (DateTime)reader["DateStart"],
+                DateEnd = reader["DateEnd"] as DateTime?,
+                State = (int)reader["State"],
+                Zyunban = (int)reader["Zyunban"],
+            };
         }
         private Kiroku BuildKirokuContent(SqlDataReader reader)
         {

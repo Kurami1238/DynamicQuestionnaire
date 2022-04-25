@@ -103,7 +103,8 @@
                         </Columns>
                     </asp:GridView>
                     <asp:Literal runat="server" ID="ltldlmsg"></asp:Literal><br />
-                    <asp:Button runat="server" ID="btndl" CssClass="btn btn-dark" Visible="false" Text="確定" OnClick="btndl_Click" />
+                    <asp:Button runat="server" ID="btndlcancer" CssClass="btn btn-dark" Visible="false" Text="取消" OnClick="btndlcancer_Click" />
+                    <asp:Button runat="server" ID="btndl" CssClass="btn btn-dark" Visible="false" Text="確定刪除" OnClick="btndl_Click" />
                 </div>
                 <uc1:Pager runat="server" ID="Pager" />
             </div>
