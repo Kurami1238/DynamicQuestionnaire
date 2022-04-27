@@ -59,7 +59,7 @@
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="狀態">
                         <ItemTemplate>
-                            <asp:Literal runat="server" ID="ltlState" Text='<%# DateTime.Compare((DateTime)Eval("DateEnd"),(DateTime.Now)) > 0 ? "投票中" : "已完結" %>'></asp:Literal>
+                            <asp:Literal runat="server" ID="ltlState" Text='<%# Eval("DateEnd") == null ? "投票中" : DateTime.Compare((DateTime)Eval("DateEnd"),(DateTime.Now)) > 0 ? "投票中" : "已完結" %>'></asp:Literal>
                         </ItemTemplate>
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="開始時間">

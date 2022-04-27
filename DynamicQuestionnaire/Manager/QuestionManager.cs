@@ -756,6 +756,67 @@ namespace DynamicQuestionnaire.Manager
                 throw;
             }
         }
+        public List<Kiroku> GetKirokuWithStastic(Guid qtID,int pageSize, int pageIndex, out int totalRows)
+        {
+            int skip = pageSize * (pageIndex - 1); // 計算跳頁數
+            if (skip < 0)
+                skip = 0;
+            string connectionStr = ConfigHelper.GetConnectionString();
+            string commandText =
+               $@"
+                    SELECT TOP {pageSize} * 
+                    FROM Kirokus
+                    WHERE 
+                        KirokuID NOT IN 
+                            ( 
+                            SELECT TOP {skip} KirokuID
+                            FROM Kirokus
+                            WHERE QuestionID = @QuestionID
+                            ORDER BY Date DESC
+                            )
+                        AND QuestionID = @QuestionID
+                        ORDER BY Date DESC
+                ";
+            string commandCountText =
+                $@"  SELECT COUNT(KirokuID)
+                    FROM Kirokus
+                    WHERE QuestionID = @QuestionID
+                    ";
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(connectionStr))
+                {
+                    using (SqlCommand command = new SqlCommand(commandText, connection))
+                    {
+                        List<Kiroku> krkl = new List<Kiroku>();
+                        connection.Open();
+                        command.Parameters.AddWithValue("@QuestionID", qtID);
+                        SqlDataReader reader = command.ExecuteReader();
+
+                        while (reader.Read())
+                        {
+                            Kiroku krk = this.BuildKirokuContent(reader);
+                            // 整合KirokuList進krk
+                            List<KirokuList> krkll = this.GetKirokuList(krk.KirokuListID);
+                            krk.KirokuList = krkll;
+                            krkl.Add(krk);
+                        }
+                        reader.Close();
+
+                        command.Parameters.Clear();
+                        command.CommandText = commandCountText;
+                        command.Parameters.AddWithValue("@QuestionID", qtID);
+                        totalRows = (int)command.ExecuteScalar();
+                        return krkl;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.WriteLog("QuestionManager.GetKirokuWithStastic", ex);
+                throw;
+            }
+        }
         public List<KirokuList> GetKirokuList(Guid klID)
         {
             string connectionStr = ConfigHelper.GetConnectionString();

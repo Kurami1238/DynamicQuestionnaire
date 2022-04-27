@@ -11,6 +11,7 @@ namespace DynamicQuestionnaire.Models
         public int Type { get; set; }
         //public List<string> Naiyo { get; set; }
         //public List<int> Kazu { get; set; }
+        public int Zettai { get; set; }
         public List<KazuandKiroku> KazuandKiroku { get; set; }
     }
     public class KazuandKiroku
