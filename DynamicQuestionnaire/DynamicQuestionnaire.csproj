@@ -86,6 +86,7 @@
     <Content Include="JS\moment.min.js" />
     <Content Include="RearEnd\Detail.aspx" />
     <Content Include="RearEnd\List.aspx" />
+    <Content Include="RearEnd\YokuaruMondai.aspx" />
     <Content Include="ShareControls\Pager.ascx" />
     <Content Include="Web.config" />
   </ItemGroup>
@@ -129,6 +130,7 @@
     <Compile Include="Manager\QuestionManager.cs" />
     <Compile Include="Models\Kiroku.cs" />
     <Compile Include="Models\KirokuList.cs" />
+    <Compile Include="Models\Mondai.cs" />
     <Compile Include="Models\NaiyoList.cs" />
     <Compile Include="Models\Question.cs" />
     <Compile Include="Models\QuestionList.cs" />
@@ -147,6 +149,13 @@
     </Compile>
     <Compile Include="RearEnd\List.aspx.designer.cs">
       <DependentUpon>List.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="RearEnd\YokuaruMondai.aspx.cs">
+      <DependentUpon>YokuaruMondai.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="RearEnd\YokuaruMondai.aspx.designer.cs">
+      <DependentUpon>YokuaruMondai.aspx</DependentUpon>
     </Compile>
     <Compile Include="ShareControls\Pager.ascx.cs">
       <DependentUpon>Pager.ascx</DependentUpon>

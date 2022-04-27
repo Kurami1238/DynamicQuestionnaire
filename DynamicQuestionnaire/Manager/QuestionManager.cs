@@ -970,5 +970,83 @@ namespace DynamicQuestionnaire.Manager
                 Zyunban = (int)reader["Zyunban"],
             };
         }
+        public List<Mondai> GetMondaiList()
+        {
+            string connectionString = ConfigHelper.GetConnectionString();
+            string commandText =
+                @"  SELECT *
+                    FROM Mondais
+                ";
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    using (SqlCommand command = new SqlCommand(commandText, conn))
+                    {
+                        conn.Open();
+                        List<Mondai> mdl = new List<Mondai>();
+                        SqlDataReader reader = command.ExecuteReader();
+                        while (reader.Read())
+                        {
+                            Mondai md = new Mondai()
+                            {
+                                MondaiID = (Guid)reader["MondaiID"],
+                                Title = (string)reader["Title"],
+                                Type = (int)reader["Type"],
+                                Naiyo = (string)reader["Naiyo"],
+                                Zettai = (int)reader["Zettai"],
+                            };
+                            mdl.Add(md);
+                        }
+                        return mdl;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.WriteLog("QuestionManager.GetMondaiList", ex);
+                throw;
+            }
+        }
+        public void CreateMondaiList(List<Mondai> mdl)
+        {
+            string connectionString = ConfigHelper.GetConnectionString();
+            string commandText =
+                $@" DELETE FROM Mondais
+                   ";
+            string commandCountText =
+                $@"  INSERT INTO Mondais
+                    (MondaiID, Title, Type, Naiyo, Zettai)
+                    VALUES
+                    (@MondaiID, @Title, @Type, @Naiyo, @Zettai)
+                    ";
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    using (SqlCommand command = new SqlCommand(commandText, conn))
+                    {
+                        conn.Open();
+                        command.ExecuteNonQuery();
+                        for (var i = 0; i < mdl.Count; i++)
+                        {
+                            command.Parameters.Clear();
+                            command.CommandText = commandCountText;
+                            command.Parameters.AddWithValue(@"MondaiID", mdl[i].MondaiID);
+                            command.Parameters.AddWithValue(@"Title", mdl[i].Title);
+                            command.Parameters.AddWithValue(@"Type", mdl[i].Type);
+                            command.Parameters.AddWithValue(@"Naiyo", mdl[i].Naiyo);
+                            command.Parameters.AddWithValue(@"Zettai", mdl[i].Zettai);
+                            command.ExecuteNonQuery();
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.WriteLog("QuestionManager.CreateMondaiList", ex);
+                throw;
+            }
+        }
     }
 }

@@ -32,46 +32,28 @@
             </div>
             <div class="migi col-sm-8 col-md-8 col-lg-8">
                 <input type="hidden" id="changetab" class="changetab" runat="server" />
-                Currently active tab:
-                <input type="text" id="active_tab" />
-                <div id="tabs">
-                    <ul>
-                        <li><a href="#tabs-1" id="1">Tab 1</a></li>
-                        <li><a href="#tabs-2" id="2">Tab 2</a></li>
-                        <li><a href="#tabs-3" id="3">Tab 3</a></li>
-                    </ul>
-                    <div id="tabs-1">
-                        <p>Tab 1 content</p>
-                    </div>
-                    <div id="tabs-2">
-                        <p>Tab 2 content</p>
-                    </div>
-                    <div id="tabs-3">
-                        <p>Tab 3 content</p>
-                    </div>
-                </div>
-                <nav>
+                <%--<nav>
                     <div class="nav nav-tabs" id="nav-tab" role="tablist">
-                        <button class="nav-link active" id="nav-question-tab" data-bs-toggle="tab" data-bs-target="#nav-question" type="button" role="tab" aria-controls="nav-question" aria-selected="true" onclick="kk();">問卷</button>
-                        <button class="nav-link" id="nav-mondai-tab" data-bs-toggle="tab" data-bs-target="#nav-mondai" type="button" role="tab" aria-controls="nav-mondai" aria-selected="false" onclick="kk();">問題</button>
-                        <button class="nav-link" id="nav-siryou-tab" data-bs-toggle="tab" data-bs-target="#nav-siryou" type="button" role="tab" aria-controls="nav-siryou" aria-selected="false" onclick="kk();">填寫資料</button>
-                        <button class="nav-link" id="nav-static-tab" data-bs-toggle="tab" data-bs-target="#nav-static" type="button" role="tab" aria-controls="nav-static" aria-selected="false" onclick="kk();">統計</button>
+                        <button class="nav-link active" id="nav-question-tab" data-bs-toggle="tab" data-bs-target="#nav-question" type="button" role="tab" aria-controls="nav-question" aria-selected="true">問卷</button>
+                        <button class="nav-link" id="nav-mondai-tab" data-bs-toggle="tab" data-bs-target="#nav-mondai" type="button" role="tab" aria-controls="nav-mondai" aria-selected="false" >問題</button>
+                        <button class="nav-link" id="nav-siryou-tab" data-bs-toggle="tab" data-bs-target="#nav-siryou" type="button" role="tab" aria-controls="nav-siryou" aria-selected="false" >填寫資料</button>
+                        <button class="nav-link" id="nav-static-tab" data-bs-toggle="tab" data-bs-target="#nav-static" type="button" role="tab" aria-controls="nav-static" aria-selected="false" >統計</button>
                     </div>
-                </nav>
-                <%--<ul class="nav nav-tabs">
+                </nav>--%>
+                <ul class="nav nav-tabs" id="myTab">
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" data-bs-toggle="tab" href="#nav-question">問卷</a>
+                        <a class="nav-link active" aria-current="page" href="#nav-question">問卷</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" data-bs-toggle="tab" href="#nav-mondai">問題</a>
+                        <a class="nav-link"  href="#nav-mondai">問題</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" data-bs-toggle="tab" href="#nav-siryou">填寫資料</a>
+                        <a class="nav-link"  href="#nav-siryou">填寫資料</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" data-bs-toggle="tab" href="#nav-static">統計</a>
+                        <a class="nav-link"  href="#nav-static">統計</a>
                     </li>
-                </ul>--%>
+                </ul>
                 <div class="tab-content" id="nav-tabContent">
                     <div class="tab-pane fade show active" id="nav-question" role="tabpanel" aria-labelledby="nav-question-tab">
                         <asp:Literal runat="server" Text="問卷名稱"></asp:Literal><asp:TextBox runat="server" ID="txbQname"></asp:TextBox><br />
@@ -85,7 +67,7 @@
                     </div>
                     <div class="tab-pane fade" id="nav-mondai" role="tabpanel" aria-labelledby="nav-mondai-tab">
                         <asp:Literal runat="server" Text="種類"></asp:Literal>
-                        <asp:DropDownList runat="server" ID="ddlTitle">
+                        <asp:DropDownList runat="server" ID="ddlTitle" OnSelectedIndexChanged="ddlTitle_SelectedIndexChanged" AppendDataBoundItems="true" AutoPostBack="true">
                             <asp:ListItem Text="自訂問題" Value="1"></asp:ListItem>
                         </asp:DropDownList><br />
                         <asp:Literal runat="server" Text="問題"></asp:Literal><asp:TextBox runat="server" ID="txbquestion"></asp:TextBox>
@@ -154,7 +136,7 @@
                     </div>
                     <div class="tab-pane fade" id="nav-siryou" role="tabpanel" aria-labelledby="nav-siryou-tab">
                         <asp:Panel runat="server" ID="pnlsiryou1">
-                            <asp:Button runat="server" ID="btnTocsv" Text="匯出" OnClick="btnTocsv_Click" /><asp:Literal runat="server" Text="預設路徑為C:\temp\"></asp:Literal><br />
+                            <asp:Button runat="server" ID="btnTocsv" Text="匯出" OnClick="btnTocsv_Click" /><asp:Literal runat="server" ID="ltlsiryoumsg" Text="預設路徑為C:\temp\"></asp:Literal><br />
                             <asp:GridView runat="server" ID="gvKiroku" CellPadding="4" ForeColor="#333333" GridLines="None" AutoGenerateColumns="False" OnRowCommand="gvKiroku_RowCommand">
                                 <AlternatingRowStyle BackColor="White" />
                                 <EditRowStyle BackColor="#7C6F57" />
@@ -207,53 +189,97 @@
                         <asp:PlaceHolder runat="server" ID="plhstatic"></asp:PlaceHolder>
                     </div>
                 </div>
-
             </div>
         </div>
     </form>
     <script>
-        $(function () {
-            $("#tabs").tabs({
-                active: 2,
-                activate: function (event, ui) {
-                    var active = $(".selector").tabs("option", "active");
-                    console.log(active);
-                    $('#active_tab').val(active.context.activeElement.id);
-                }
+        $(document).ready(function () {
+            var currentTabIndex = "0";
+            $('#myTab a').click(function (e) {
+                e.preventDefault()
+                $(this).tab('show')
             });
 
-        });
-        $(document).ready(function () {
-            //var name = $('.changetab').val;
-            //console.log(name);
-            //if (name != undefined && name != null && name != "") {
-            //    var someTabTriggerEl = document.querySelector(`#nav a[href="${name}"]`)
-            //    var tab = new bootstrap.Tab(someTabTriggerEl)
-            //    tab.show()
-            //}
-            //    var triggerTabList = [].slice.call(document.querySelectorAll(`#${name} a`))
-            //    triggerTabList.forEach(function (triggerEl) {
-            //        var tabTrigger = new bootstrap.Tab(triggerEl)
-            //        triggerEl.addEventListener('click', function (event) {
-            //            event.preventDefault()
-            //            tabTrigger.show()
-            //        })
-            //    })
-            //var triggerEl = document.querySelector(`#${name} a[href="#${name}"]`);
-            //bootstrap.Tab.getInstance(triggerEl).show()
-            //};
-            //$(function kk() {
-            //    var tabName = $("[id*=nav]").val() != "" ? $("[id*=nav]").val() : "tab01";
-            //    $('#tabs a[href="#' + tabName + '"]').tab('show');
-            //    if ($("[id*=nav]").val() == "" || tabName == "tab01") {
-            //        $("#tab01").addClass('active');
-            //    }
+            // store the currently selected tab in the hash value
+            $("ul.nav-tabs > li > a").on("shown.bs.tab", function (e) {
+                var id = $(e.target).attr("href");
+                var id2 = $(e.relatedTarget).attr("href");
+                console.log(id);
+                console.log(id2);
+                sessionStorage.setItem('tab-name',id)
+                window.location.hash = id;
+            });
+            // on load of the page: switch to the currently selected tab
+            var hash = window.location.hash;
+            if (sessionStorage.getItem('tab-name') != null) {
+                hash = sessionStorage.getItem('tab-name');
+            }
+            console.log(hash);
+            $('#myTab a[href="' + hash + '"]').tab('show');
 
-            //    $("#tab a").click(function () {
-            //        $("[id*=nav]").val($(this).attr("href").replace("#", ""));
-            //    });
-            //})
+            //var currentTabIndex = "0";
+            //var tabname;
+            //$tab = $(`#${tabname}`).tabs({
+            //    activate: function (e, ui) {
+            //        currentTabIndex = ui.newTab.index().toString();
+            //        sessionStorage.setItem('tab-index', currentTabIndex);
+            //    }
+            //});
+
+            //if (sessionStorage.getItem('tab-index') != null) {
+            //    currentTabIndex = sessionStorage.getItem('tab-index');
+            //    console.log(currentTabIndex);
+            //    $tab.tabs('option', 'active', currentTabIndex);
+            //}
+            //$('#nav-tab').on('click', function () {
+            //    sessionStorage.setItem("tab-index", currentTabIndex);
+            //    tabname = this.id;
+            //    //window.location = "/Home/Index/";
+            //});
         });
+
+        //$(function () {
+        //    $("#tabs").tabs({
+        //        active: 2,
+        //        activate: function (event, ui) {
+        //            var active = $(".selector").tabs("option", "active");
+        //            console.log(active);
+        //            $('#active_tab').val(active.context.activeElement.id);
+        //        }
+        //    });
+
+        //});
+        //$(document).ready(function () {
+        //    //var name = $('.changetab').val;
+        //    //console.log(name);
+        //    //if (name != undefined && name != null && name != "") {
+        //    //    var someTabTriggerEl = document.querySelector(`#nav a[href="${name}"]`)
+        //    //    var tab = new bootstrap.Tab(someTabTriggerEl)
+        //    //    tab.show()
+        //    //}
+        //    //    var triggerTabList = [].slice.call(document.querySelectorAll(`#${name} a`))
+        //    //    triggerTabList.forEach(function (triggerEl) {
+        //    //        var tabTrigger = new bootstrap.Tab(triggerEl)
+        //    //        triggerEl.addEventListener('click', function (event) {
+        //    //            event.preventDefault()
+        //    //            tabTrigger.show()
+        //    //        })
+        //    //    })
+        //    //var triggerEl = document.querySelector(`#${name} a[href="#${name}"]`);
+        //    //bootstrap.Tab.getInstance(triggerEl).show()
+        //    //};
+        //    //$(function kk() {
+        //    //    var tabName = $("[id*=nav]").val() != "" ? $("[id*=nav]").val() : "tab01";
+        //    //    $('#tabs a[href="#' + tabName + '"]').tab('show');
+        //    //    if ($("[id*=nav]").val() == "" || tabName == "tab01") {
+        //    //        $("#tab01").addClass('active');
+        //    //    }
+
+        //    //    $("#tab a").click(function () {
+        //    //        $("[id*=nav]").val($(this).attr("href").replace("#", ""));
+        //    //    });
+        //    //})
+        //});
 
         //var name = $('.changetab').val;
         /* var tabName = $("[id*=TabName]").val() != "" ? $("[id=TabName]").val() : "nav-mondai";*/

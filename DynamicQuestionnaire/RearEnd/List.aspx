@@ -25,10 +25,10 @@
         <input type="hidden" id="msgmsg" class="msgmsg" runat="server" />
         <div class="row">
             <div class="hidari col-sm-3 col-md-3 col-lg-3">
-                <a>
+                <a href="List.aspx">
                     <asp:Literal runat="server" Text="問卷管理"></asp:Literal>
                 </a><br />
-                <a>
+                <a href="YokuaruMondai.aspx">
                     <asp:Literal runat="server" Text="常用問題管理"></asp:Literal>
                 </a>
             </div>

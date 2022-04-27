@@ -18,6 +18,7 @@ namespace DynamicQuestionnaire.RearEnd
         private List<QuestionList> _qtll;
         private Question _qt;
         private const int _pageSize = 10;
+        List<Kiroku> _krkl;
 
         protected void Page_Init(object sender, EventArgs e)
         {
@@ -66,8 +67,14 @@ namespace DynamicQuestionnaire.RearEnd
                     // 問題頁
                     this.gv.DataSource = qtll;
                     this.gv.DataBind();
+                    List<Mondai> mdl = this._qmgr.GetMondaiList();
+                    this.ddlTitle.DataSource = mdl;
+                    this.ddlTitle.DataTextField = "Title";
+                    this.ddlTitle.DataValueField = "MondaiID";
+                    this.ddlTitle.DataBind();
                     // 填寫資料頁
                     krkl = this._qmgr.GetKirokuWithStastic(qID, _pageSize, pageIndex, out int totalRows);
+                    this._krkl = krkl;
                     this.gvKiroku.DataSource = krkl;
                     this.gvKiroku.DataBind();
                     this.Pager.TotalRow = totalRows;
@@ -307,6 +314,13 @@ namespace DynamicQuestionnaire.RearEnd
                 // 問題頁
                 this.gv.DataSource = qtll;
                 this.gv.DataBind();
+                // 填寫資料頁
+                this.gvKiroku.DataSource = krkl;
+                this.gvKiroku.DataBind();
+                int totalRows = 0;
+                this.Pager.TotalRow = totalRows;
+                this.Pager.PageIndex = pageIndex;
+                this.Pager.Bind();
             }
             this.ph.DataBind();
 
@@ -374,6 +388,7 @@ namespace DynamicQuestionnaire.RearEnd
             }
             HttpContext.Current.Session["ChangeTab"] = "mondai";
             this.changetab.Value = "mondai";
+            Response.Redirect(Request.RawUrl + "#nav-mondai");
         }
         protected void gv_RowCommand(object sender, GridViewCommandEventArgs e)
         {
@@ -459,59 +474,52 @@ namespace DynamicQuestionnaire.RearEnd
             // 判斷是不是從gv的編輯模式上來的
             if (HttpContext.Current.Session["EditNowqtl"] == null)
             {
-                switch (this.ddlTitle.SelectedValue)
+                if (HttpContext.Current.Session["Editqt"] != null)
                 {
-                    case "1":
-                        if (HttpContext.Current.Session["Editqt"] != null)
+                    qt = (Question)HttpContext.Current.Session["Editqt"];
+                    qtll = (List<QuestionList>)HttpContext.Current.Session["Editqtll"];
+                }
+                else
+                {
+                    qt = (Question)HttpContext.Current.Session["Question"];
+                    if (HttpContext.Current.Session["QuestionListl"] != null)
+                        qtll = (List<QuestionList>)HttpContext.Current.Session["QuestionListl"];
+                }
+                qtl = new QuestionList()
+                {
+                    QuestionListID = qt.QuestionListID,
+                    Title = title,
+                    Type = Convert.ToInt32(this.ddlType.SelectedValue),
+                    Zyunban = qtll.Count + 1,
+                    Zettai = this.ckbhituyou.Checked == true ? 1 : 2,
+                };
+                // Type= 1,2 把回答加進qtl
+                switch (qtl.Type)
+                {
+                    case 1:
+                    case 2:
+                        qtl.NaiyoListID = Guid.NewGuid();
+                        Guid.TryParse(qtl.NaiyoListID.ToString(), out Guid nlID);
+                        for (var i = 0; i < naiyolist.Count; i++)
                         {
-                            qt = (Question)HttpContext.Current.Session["Editqt"];
-                            qtll = (List<QuestionList>)HttpContext.Current.Session["Editqtll"];
+                            nyl = new NaiyoList()
+                            {
+                                NaiyoListID = nlID,
+                                Naiyo = naiyolist[i],
+                            };
+                            nyll.Add(nyl);
                         }
-                        else
-                        {
-                            qt = (Question)HttpContext.Current.Session["Question"];
-                            if (HttpContext.Current.Session["QuestionListl"] != null)
-                                qtll = (List<QuestionList>)HttpContext.Current.Session["QuestionListl"];
-                        }
-                        qtl = new QuestionList()
-                        {
-                            QuestionListID = qt.QuestionListID,
-                            Title = title,
-                            Type = Convert.ToInt32(this.ddlType.SelectedValue),
-                            Zyunban = qtll.Count + 1,
-                            Zettai = this.ckbhituyou.Checked == true ? 1 : 2,
-                        };
-                        // Type= 1,2 把回答加進qtl
-                        switch (qtl.Type)
-                        {
-                            case 1:
-                            case 2:
-                                qtl.NaiyoListID = Guid.NewGuid();
-                                Guid.TryParse(qtl.NaiyoListID.ToString(), out Guid nlID);
-                                for (var i = 0; i < naiyolist.Count; i++)
-                                {
-                                    nyl = new NaiyoList()
-                                    {
-                                        NaiyoListID = nlID,
-                                        Naiyo = naiyolist[i],
-                                    };
-                                    nyll.Add(nyl);
-                                }
-                                qtl.NaiyoList = nyll;
-                                break;
-                            default:
-                                break;
-                        }
-                        qtll.Add(qtl);
-                        if (HttpContext.Current.Session["Editqt"] != null)
-                            HttpContext.Current.Session["Editqtll"] = qtll;
-                        else
-                            HttpContext.Current.Session["QuestionListl"] = qtll;
+                        qtl.NaiyoList = nyll;
                         break;
-                    // 常用問題管理
                     default:
                         break;
                 }
+                qtll.Add(qtl);
+                if (HttpContext.Current.Session["Editqt"] != null)
+                    HttpContext.Current.Session["Editqtll"] = qtll;
+                else
+                    HttpContext.Current.Session["QuestionListl"] = qtll;
+
             }
             else
             {
@@ -572,6 +580,7 @@ namespace DynamicQuestionnaire.RearEnd
             HttpContext.Current.Session["QuestionListl"] = null;
             this.gv.DataSource = qtll;
             this.gv.DataBind();
+            this.ltlmondaimsg.Text = "";
         }
         protected void btnMondaigogogo_Click(object sender, EventArgs e)
         {
@@ -579,6 +588,11 @@ namespace DynamicQuestionnaire.RearEnd
             List<QuestionList> qtll = new List<QuestionList>();
             if (HttpContext.Current.Session["Editqt"] != null)
             {
+                if (this._krkl.Count > 0)
+                {
+                    this.ltlmondaimsg.Text = $"目前已經有 {this._krkl.Count} 筆紀錄，所以無法更改題目。";
+                    return;
+                }
                 qtll = (List<QuestionList>)HttpContext.Current.Session["Editqtll"];
                 qt = (Question)HttpContext.Current.Session["Editqt"];
                 this._qmgr.UpdateQuestion(qt, qtll);
@@ -637,59 +651,68 @@ namespace DynamicQuestionnaire.RearEnd
             this.gv.DataSource = qtll;
             this.gv.DataBind();
         }
-
         protected void btnTocsv_Click(object sender, EventArgs e)
         {
+
             List<Kiroku> krkl = new List<Kiroku>();
             krkl = this._qmgr.GetKirokuWithStastic(this._qID);
-            DataTable dt = new DataTable();
-            dt.Clear();
-            dt.Columns.Add("Name");
-            dt.Columns.Add("Phone");
-            dt.Columns.Add("Email");
-            dt.Columns.Add("Age");
-            dt.Columns.Add("Date");
-            dt.Columns.Add("Title");
-            dt.Columns.Add("Type");
-            dt.Columns.Add("Naiyo");
-            // 放入資料
-            for (var i = 0; i < krkl.Count; i++)
+            if (krkl.Count > 0)
             {
-                for (var j = 0; j < krkl[i].KirokuList.Count; j++)
+                DataTable dt = new DataTable();
+                dt.Clear();
+                dt.Columns.Add("Name");
+                dt.Columns.Add("Phone");
+                dt.Columns.Add("Email");
+                dt.Columns.Add("Age");
+                dt.Columns.Add("Date");
+                dt.Columns.Add("Title");
+                dt.Columns.Add("Type");
+                dt.Columns.Add("Naiyo");
+                // 放入資料
+                for (var i = 0; i < krkl.Count; i++)
                 {
-                    DataRow dr = dt.NewRow();
-                    dr["Name"] = krkl[i].Name;
-                    dr["Phone"] = krkl[i].Phone;
-                    dr["Email"] = krkl[i].Email;
-                    dr["Age"] = krkl[i].Age;
-                    dr["Date"] = krkl[i].Date;
-                    dr["Title"] = krkl[i].KirokuList[j].Title;
-                    dr["Type"] = krkl[i].KirokuList[j].Type;
-                    if (krkl[i].KirokuList[j].Type == 2)
+                    for (var j = 0; j < krkl[i].KirokuList.Count; j++)
                     {
-                        string s = "";
-                        for (var k = 0; k < krkl[i].KirokuList[j].ckbNaiyo.Count; k++)
+                        DataRow dr = dt.NewRow();
+                        dr["Name"] = krkl[i].Name;
+                        dr["Phone"] = krkl[i].Phone;
+                        dr["Email"] = krkl[i].Email;
+                        dr["Age"] = krkl[i].Age;
+                        dr["Date"] = krkl[i].Date;
+                        dr["Title"] = krkl[i].KirokuList[j].Title;
+                        dr["Type"] = krkl[i].KirokuList[j].Type;
+                        if (krkl[i].KirokuList[j].Type == 2)
                         {
-                            if (i != krkl[i].KirokuList[j].ckbNaiyo.Count - 1)
-                                s += $"{krkl[i].KirokuList[j].ckbNaiyo[k]}&";
-                            else
-                                s += krkl[i].KirokuList[j].ckbNaiyo[k];
+                            string s = "";
+                            for (var k = 0; k < krkl[i].KirokuList[j].ckbNaiyo.Count; k++)
+                            {
+                                if (i != krkl[i].KirokuList[j].ckbNaiyo.Count - 1)
+                                    s += $"{krkl[i].KirokuList[j].ckbNaiyo[k]}&";
+                                else
+                                    s += krkl[i].KirokuList[j].ckbNaiyo[k];
+                            }
+                            dr["Naiyo"] = s;
                         }
-                        dr["Naiyo"] = s;
+                        else
+                            dr["Naiyo"] = krkl[i].KirokuList[j].Naiyo;
+                        dt.Rows.Add(dr);
                     }
-                    else
-                        dr["Naiyo"] = krkl[i].KirokuList[j].Naiyo;
-                    dt.Rows.Add(dr);
                 }
+                this.CreateCSVFile(dt, "C:\\temp");
             }
-            this.CreateCSVFile(dt, "C:\\temp");
+            else
+            {
+                this.ltlsiryoumsg.Text = "無資料可匯出";
+                return;
+            }
+
         }
         public void CreateCSVFile(DataTable dt, string strFilePath)
         {
             #region Export Grid to CSV     
             if (!Directory.Exists(strFilePath)) // 假如資料夾不存在，先建立
                 Directory.CreateDirectory(strFilePath);
-            string fileName = this._qt.QName + DateTime.Now.ToString("yyyyMMdd_HHmmss_FFFFFF")+ ".csv";
+            string fileName = this._qt.QName + DateTime.Now.ToString("yyyyMMdd_HHmmss_FFFFFF") + ".csv";
             string newFilePath = Path.Combine(strFilePath, fileName);
             // Create the CSV file to which grid data will be exported.    
             StreamWriter sw = new StreamWriter(newFilePath, false);
@@ -738,13 +761,26 @@ namespace DynamicQuestionnaire.RearEnd
                     break;
             }
         }
-
         protected void btnkirokucancer_Click(object sender, EventArgs e)
         {
             HttpContext.Current.Session["siryou"] = null;
             this.pnlsiryou2.Visible = false;
             this.pnlsiryou1.Visible = true;
             Response.Redirect(Request.RawUrl + "#nav-siryou");
+        }
+        protected void ddlTitle_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            List<Mondai> mdl = this._qmgr.GetMondaiList();
+            for (var i = 0; i < mdl.Count; i++)
+            {
+                if (string.Compare(this.ddlTitle.SelectedValue, mdl[i].MondaiID.ToString()) == 0)
+                {
+                    this.txbquestion.Text = mdl[i].Title;
+                    this.txbNaiyo.Text = mdl[i].Naiyo;
+                    this.ddlType.SelectedValue = mdl[i].Type.ToString();
+                    this.ckbhituyou.Checked = mdl[i].Zettai == 1 ? true : false;
+                }
+            }
         }
     }
 }
