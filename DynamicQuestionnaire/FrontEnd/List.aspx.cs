@@ -83,7 +83,7 @@ namespace DynamicQuestionnaire.FrontEnd
                 this.ltlmsg.Text = string.Empty;
                 foreach (var x in errormsg)
                 {
-                    string s = x.Replace(x, x + Environment.NewLine);
+                    string s = x.Replace(x, x + "<br>");
                     this.ltlmsg.Text += s;
                 }
                 return;

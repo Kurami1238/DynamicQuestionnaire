@@ -24,7 +24,11 @@
         <asp:HiddenField runat="server" ID="hdf" />
         <input type="hidden" id="msgmsg" class="msgmsg" runat="server" />
         <div class="row">
+            <a href="../Index.aspx">
+                    <h2>DynamicQuestionnaire</h2>
+                </a>
             <div class="hidari col-sm-3 col-md-3 col-lg-3">
+                
                 <a href="List.aspx">
                     <asp:Literal runat="server" Text="問卷管理"></asp:Literal>
                 </a><br />
@@ -38,12 +42,12 @@
                     <asp:TextBox runat="server" ID="txbT"></asp:TextBox><br />
                     <asp:Literal runat="server" ID="ltl2" Text="開始／結束"></asp:Literal>
                     <asp:TextBox runat="server" ID="txbS"></asp:TextBox><asp:TextBox runat="server" ID="txbE"></asp:TextBox>
-                    <asp:Button runat="server" ID="btnS" Text="搜尋" OnClick="btnS_Click" /><br />
+                    <asp:Button runat="server" ID="btnS" Text="搜尋" OnClick="btnS_Click" CssClass="btn-dark" /><br />
                     <asp:Literal runat="server" ID="ltlmsg"></asp:Literal>
                 </div>
                 <div>
-                    <asp:ImageButton class="imgbtn" ID="btnDelete" runat="server" ImageUrl="../CSS/1.png" Height="50px" Width="50px" OnClick="btnDelete_Click" />
-                    <asp:ImageButton class="imgbtn" ID="btnCreate" runat="server" ImageUrl="../CSS/2.png" Height="50px" Width="50px" OnClick="btnCreate_Click" />
+                    <asp:ImageButton class="imgbtn" ID="btnDelete" runat="server" ImageUrl="../CSS/1.png" Height="40px" Width="40px" OnClick="btnDelete_Click" />
+                    <asp:ImageButton class="imgbtn" ID="btnCreate" runat="server" ImageUrl="../CSS/2.png" Height="40px" Width="40px" OnClick="btnCreate_Click" />
                     <br />
 
                 </div>

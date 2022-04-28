@@ -62,8 +62,8 @@
                         <asp:Literal runat="server" Text="結束時間"></asp:Literal><asp:TextBox runat="server" ID="txbE" TextMode="DateTime"></asp:TextBox><br />
                         <asp:CheckBox runat="server" ID="ckbState" Checked="true" Text="已啟用" /><br />
                         <asp:Literal runat="server" ID="ltlquestionmsg"></asp:Literal><br />
-                        <asp:Button runat="server" ID="cancer" Text="取消" OnClick="cancer_Click" />
-                        <asp:Button runat="server" ID="gogogo" Text="送出" OnClick="gogogo_Click" />
+                        <asp:Button runat="server" ID="cancer" Text="取消" OnClick="cancer_Click" CssClass="btn-dark" />
+                        <asp:Button runat="server" ID="gogogo" Text="送出" OnClick="gogogo_Click" CssClass="btn-dark" />
                     </div>
                     <div class="tab-pane fade" id="nav-mondai" role="tabpanel" aria-labelledby="nav-mondai-tab">
                         <asp:Literal runat="server" Text="種類"></asp:Literal>
@@ -83,7 +83,7 @@
                         <asp:PlaceHolder runat="server" ID="ph" Visible='<%# this.ddlType.SelectedValue == "1" ? true : this.ddlType.SelectedValue == "2" ? true : false %>'>
                             <asp:Literal runat="server" Text="回答"></asp:Literal><asp:TextBox runat="server" ID="txbNaiyo"></asp:TextBox><asp:Literal runat="server" Text="多個答案以;分隔"></asp:Literal>
                         </asp:PlaceHolder>
-                        <asp:Button runat="server" ID="btnCreateMondai" Text="加入" OnClick="btnCreateMondai_Click" /><br />
+                        <asp:Button runat="server" ID="btnCreateMondai" Text="加入" OnClick="btnCreateMondai_Click" CssClass="btn-dark" /><br />
                         <asp:ImageButton class="imgbtn" ID="btnDeleteMondai" runat="server" ImageUrl="../CSS/1.png" Height="30px" Width="30px" OnClick="btnDeleteMondai_Click" /><br />
                         <asp:GridView runat="server" ID="gv" CellPadding="4" ForeColor="#333333" GridLines="None" AutoGenerateColumns="False" OnRowCommand="gv_RowCommand">
                             <AlternatingRowStyle BackColor="White" />
@@ -125,18 +125,18 @@
                                 </asp:TemplateField>
                                 <asp:TemplateField>
                                     <ItemTemplate>
-                                        <asp:Button runat="server" ID="btnEdit" Text="編輯" CommandName="btnEdit" CommandArgument='<%# Eval("NaiyoListID") %>' />
+                                        <asp:Button runat="server" ID="btnEdit" Text="編輯" CommandName="btnEdit" CommandArgument='<%# Eval("NaiyoListID") %>' CssClass="btn-dark" />
                                     </ItemTemplate>
                                 </asp:TemplateField>
                             </Columns>
                         </asp:GridView>
                         <asp:Literal runat="server" ID="ltlmondaimsg"></asp:Literal>
-                        <asp:Button runat="server" ID="btnCancerMondai" Text="取消" OnClick="btnCancerMondai_Click" />
-                        <asp:Button runat="server" ID="btnMondaigogogo" Text="送出" OnClick="btnMondaigogogo_Click" />
+                        <asp:Button runat="server" ID="btnCancerMondai" Text="取消" OnClick="btnCancerMondai_Click" CssClass="btn-dark"/>
+                        <asp:Button runat="server" ID="btnMondaigogogo" Text="送出" OnClick="btnMondaigogogo_Click" CssClass="btn-dark" />
                     </div>
                     <div class="tab-pane fade" id="nav-siryou" role="tabpanel" aria-labelledby="nav-siryou-tab">
                         <asp:Panel runat="server" ID="pnlsiryou1">
-                            <asp:Button runat="server" ID="btnTocsv" Text="匯出" OnClick="btnTocsv_Click" /><asp:Literal runat="server" ID="ltlsiryoumsg" Text="預設路徑為C:\temp\"></asp:Literal><br />
+                            <asp:Button runat="server" ID="btnTocsv" Text="匯出" OnClick="btnTocsv_Click" CssClass="btn-dark" /><asp:Literal runat="server" ID="ltlsiryoumsg" Text="預設路徑為C:\temp\"></asp:Literal><br />
                             <asp:GridView runat="server" ID="gvKiroku" CellPadding="4" ForeColor="#333333" GridLines="None" AutoGenerateColumns="False" OnRowCommand="gvKiroku_RowCommand">
                                 <AlternatingRowStyle BackColor="White" />
                                 <EditRowStyle BackColor="#7C6F57" />
@@ -167,7 +167,7 @@
                                     </asp:TemplateField>
                                     <asp:TemplateField HeaderText="觀看細節">
                                         <ItemTemplate>
-                                            <asp:Button runat="server" ID="btnsiryoAll" Text="前往" CommandName="siryou" CommandArgument='<%# Eval("KirokuID") %>' />
+                                            <asp:Button runat="server" ID="btnsiryoAll" Text="前往" CommandName="siryou" CommandArgument='<%# Eval("KirokuID") %>' CssClass="btn-dark" />
                                         </ItemTemplate>
                                     </asp:TemplateField>
                                 </Columns>
@@ -195,6 +195,10 @@
     <script>
         $(document).ready(function () {
             var currentTabIndex = "0";
+            //if ($('.changetab').val != undefined && $('.changetab').val != null && $('.changetab').val != "") {
+            //    $('#myTab a[href="#nav-mondai"]').tab('show');
+            //    //console.log($('.changetab').val);
+            //}
             $('#myTab a').click(function (e) {
                 e.preventDefault()
                 $(this).tab('show')

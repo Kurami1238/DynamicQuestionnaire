@@ -213,6 +213,7 @@ namespace DynamicQuestionnaire.RearEnd
                             Zettai = _qtll[i].Zettai,
                             KazuandKiroku = new List<KazuandKiroku>(),
                         };
+                        if (_qtll[i].NaiyoList != null)
                         for (var j = 0; j < _qtll[i].NaiyoList.Count; j++)
                         {
                             KazuandKiroku kak = new KazuandKiroku()
@@ -254,9 +255,9 @@ namespace DynamicQuestionnaire.RearEnd
                     for (var i = 0; i < qtlKandKl.Count; i++)
                     {
                         Label lbl = new Label();
-                        string lbltext = $"{i + 1}. {qtll[i].Title}";
+                        string lbltext = $"{i + 1}. {qtlKandKl[i].Title}";
                         if (qtlKandKl[i].Zettai == 1)
-                            lbltext = $"{i + 1}. {qtll[i].Title} *";
+                            lbltext = $"{i + 1}. {qtlKandKl[i].Title} *";
                         lbl.Text = lbltext;
                         this.plhstatic.Controls.Add(lbl);
                         switch (qtlKandKl[i].Type)
@@ -300,6 +301,7 @@ namespace DynamicQuestionnaire.RearEnd
                 // 問卷頁
                 this.txbS.Text = DateTime.Now.ToString();
                 this.ckbState.Checked = true;
+                // 假如是新建以後的問卷
                 if (HttpContext.Current.Session["Question"] != null)
                 {
                     qt = (Question)HttpContext.Current.Session["Question"];
@@ -314,6 +316,11 @@ namespace DynamicQuestionnaire.RearEnd
                 // 問題頁
                 this.gv.DataSource = qtll;
                 this.gv.DataBind();
+                List<Mondai> mdl = this._qmgr.GetMondaiList();
+                this.ddlTitle.DataSource = mdl;
+                this.ddlTitle.DataTextField = "Title";
+                this.ddlTitle.DataValueField = "MondaiID";
+                this.ddlTitle.DataBind();
                 // 填寫資料頁
                 this.gvKiroku.DataSource = krkl;
                 this.gvKiroku.DataBind();
@@ -351,7 +358,7 @@ namespace DynamicQuestionnaire.RearEnd
                 this.ltlquestionmsg.Text = string.Empty;
                 foreach (var x in errormsg)
                 {
-                    string s = x.Replace(x, x + Environment.NewLine);
+                    string s = x.Replace(x, x + "<br>");
                     this.ltlquestionmsg.Text += s;
                 }
                 return;
@@ -386,8 +393,8 @@ namespace DynamicQuestionnaire.RearEnd
                 HttpContext.Current.Session["QuestionListl"] = null;
                 HttpContext.Current.Session["Editqtll"] = null;
             }
-            HttpContext.Current.Session["ChangeTab"] = "mondai";
-            this.changetab.Value = "mondai";
+            HttpContext.Current.Session["ChangeTab"] = "nav-mondai";
+            this.changetab.Value = "nav-mondai";
             Response.Redirect(Request.RawUrl + "#nav-mondai");
         }
         protected void gv_RowCommand(object sender, GridViewCommandEventArgs e)
@@ -406,6 +413,7 @@ namespace DynamicQuestionnaire.RearEnd
                         if (string.Compare(qtll[i].NaiyoListID.ToString(), e.CommandArgument.ToString()) == 0)
                         {
                             this.txbquestion.Text = qtll[i].Title;
+                            if (qtll[i].NaiyoList != null)
                             for (var j = 0; j < qtll[i].NaiyoList.Count; j++)
                             {
                                 if (i != qtll[i].NaiyoList.Count - 1)
@@ -461,7 +469,7 @@ namespace DynamicQuestionnaire.RearEnd
                 this.ltlmondaimsg.Text = string.Empty;
                 foreach (var x in errormsg)
                 {
-                    string s = x.Replace(x, x + Environment.NewLine);
+                    string s = x.Replace(x, x + "<br>");
                     this.ltlmondaimsg.Text += s;
                 }
                 return;
@@ -781,6 +789,24 @@ namespace DynamicQuestionnaire.RearEnd
                     this.ckbhituyou.Checked = mdl[i].Zettai == 1 ? true : false;
                 }
             }
+            if (this.ddlTitle.SelectedValue == "1")
+            {
+                this.txbquestion.Text = "";
+                this.txbNaiyo.Text = "";
+                this.ddlType.SelectedValue = "1";
+                this.ckbhituyou.Checked = true;
+            }
         }
+        //protected void ddlType_SelectedIndexChanged(object sender, EventArgs e)
+        //{
+        //    if (this.ddlType.SelectedValue != "1")
+        //        if (this.ddlType.SelectedValue != "2")
+        //            this.ph.Visible = false;
+        //    if (this.ddlType.SelectedValue == "1")
+        //        this.ph.Visible = true;
+        //    if (this.ddlType.SelectedValue == "2")
+        //        this.ph.Visible = true;
+        //    Response.Redirect(Request.RawUrl + "#nav-mondai");
+        //}
     }
 }

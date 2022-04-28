@@ -31,55 +31,62 @@ namespace DynamicQuestionnaire.FrontEnd
                 this._qtll = qtll;
                 this.QID.Value = qID.ToString();
             }
-            this.ltlQName.Text = qt.QName;
+            this.ltlQName.Text = $"{qt.QName}問卷 統計結果";
             // 確定生成幾個統計圖
             // 統計問題結果數字
             List<QuestionListKazuandKiroku> qtlKandKl = new List<QuestionListKazuandKiroku>();
-            for (var i = 0; i < _qtll.Count; i++)
+            if (_qtll.Count >= 0)
             {
-                QuestionListKazuandKiroku qtlKandK = new QuestionListKazuandKiroku()
+                for (var i = 0; i < _qtll.Count; i++)
                 {
-                    Title = _qtll[i].Title,
-                    Type = _qtll[i].Type,
-                    KazuandKiroku = new List<KazuandKiroku>(),
-                };
-                for (var j = 0; j < _qtll[i].NaiyoList.Count; j++)
-                {
-                    KazuandKiroku kak = new KazuandKiroku()
+                    QuestionListKazuandKiroku qtlKandK = new QuestionListKazuandKiroku()
                     {
-                        Naiyo = _qtll[i].NaiyoList[j].Naiyo,
-                        Kazu = 0,
+                        Title = _qtll[i].Title,
+                        Type = _qtll[i].Type,
+                        KazuandKiroku = new List<KazuandKiroku>(),
                     };
-                    for (var k = 0; k < krkl.Count; k++)
-                    {
-                        for (var x = 0; x < krkl[k].KirokuList.Count; x++)
+                    if (_qtll[i].NaiyoList != null)
+                        for (var j = 0; j < _qtll[i].NaiyoList.Count; j++)
                         {
-                            switch (krkl[k].KirokuList[x].Type)
+                            KazuandKiroku kak = new KazuandKiroku()
                             {
-                                case 1:
-                                    if (string.Compare(krkl[k].KirokuList[x].Naiyo, _qtll[i].NaiyoList[j].Naiyo) == 0)
+                                Naiyo = _qtll[i].NaiyoList[j].Naiyo,
+                                Kazu = 0,
+                            };
+                            for (var k = 0; k < krkl.Count; k++)
+                            {
+                                for (var x = 0; x < krkl[k].KirokuList.Count; x++)
+                                {
+                                    switch (krkl[k].KirokuList[x].Type)
                                     {
-                                        kak.Kazu += 1;
+                                        case 1:
+                                            if (string.Compare(krkl[k].KirokuList[x].Naiyo, _qtll[i].NaiyoList[j].Naiyo) == 0)
+                                            {
+                                                kak.Kazu += 1;
+                                            }
+                                            break;
+                                        case 2:
+                                            for (var y = 0; y < krkl[k].KirokuList[x].ckbNaiyo.Count; y++)
+                                            {
+                                                if (string.Compare(krkl[k].KirokuList[x].ckbNaiyo[y], _qtll[i].NaiyoList[j].Naiyo) == 0)
+                                                {
+                                                    kak.Kazu += 1;
+                                                }
+                                            }
+                                            break;
+                                        default:
+                                            break;
                                     }
-                                    break;
-                                case 2:
-                                    for (var y = 0; y < krkl[k].KirokuList[x].ckbNaiyo.Count; y++)
-                                    {
-                                        if (string.Compare(krkl[k].KirokuList[x].ckbNaiyo[y], _qtll[i].NaiyoList[j].Naiyo) == 0)
-                                        {
-                                            kak.Kazu += 1;
-                                        }
-                                    }
-                                    break;
-                                default:
-                                    break;
+                                }
                             }
+                            qtlKandK.KazuandKiroku.Add(kak);
                         }
-                    }
-                    qtlKandK.KazuandKiroku.Add(kak);
+                    qtlKandKl.Add(qtlKandK);
                 }
-                qtlKandKl.Add(qtlKandK);
+
             }
+            else
+                this.ltlmsg.Text = "目前尚無資料";
             // 生成統計圖
 
             //for (var i = 0; i < _qtll.Count; i++)
@@ -126,5 +133,9 @@ namespace DynamicQuestionnaire.FrontEnd
             //}
         }
 
+        protected void btnback_Click(object sender, EventArgs e)
+        {
+            Response.Redirect("List.aspx");
+        }
     }
 }

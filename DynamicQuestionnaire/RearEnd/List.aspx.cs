@@ -58,7 +58,7 @@ namespace DynamicQuestionnaire.RearEnd
         }
         protected void btnDelete_Click(object sender, ImageClickEventArgs e)
         {
-            List<string> list = new List<string>(); 
+            List<string> list = new List<string>();
 
             for (var i = 0; i < this.gv.Rows.Count; i++)
             {
@@ -100,25 +100,32 @@ namespace DynamicQuestionnaire.RearEnd
                     this.ltldlmsg.Text = $"{deleteS} | {cantDs}";
                     //this.ltlDeleteModalContent.Text = $"{deleteS}{Environment.NewLine}{cantDs}";
                 }
+                HttpContext.Current.Session["Deleteqtl"] = Deleteqtl;
+                HttpContext.Current.Session["CantDqtl"] = CantDqtl;
                 this.btndl.Visible = true;
             }
-            
+
         }
         protected void btndl_Click(object sender, EventArgs e)
         {
+            this._delqtl = (List<Question>)HttpContext.Current.Session["Deleteqtl"];
+            this._cdelqtl = (List<Question>)HttpContext.Current.Session["CantDqtl"];
             // 排除已經有紀錄的問卷
-            for (var i = 0; i < this._cdelqtl.Count; i++)
-            {
-                foreach (var x in this._delqtl)
+            if (this._cdelqtl != null)
+                for (var i = 0; i < this._cdelqtl.Count; i++)
                 {
-                    if (this._cdelqtl[i].Zyunban == x.Zyunban)
+                    foreach (var x in this._delqtl)
                     {
-                        this._delqtl.Remove(x);
+                        if (this._cdelqtl[i].Zyunban == x.Zyunban)
+                        {
+                            this._delqtl.Remove(x);
+                        }
                     }
                 }
-            }
             this._qmgr.DeleteQuestion(this._delqtl);
             HttpContext.Current.Session["Msg"] = "刪除成功";
+            HttpContext.Current.Session["Deleteqtl"] = null;
+            HttpContext.Current.Session["CantDqtl"] = null;
             Response.Redirect(this.Request.Url.LocalPath, true);
         }
         protected void kakuzitudelete_Click(object sender, EventArgs e)
@@ -169,7 +176,7 @@ namespace DynamicQuestionnaire.RearEnd
                 this.ltlmsg.Text = string.Empty;
                 foreach (var x in errormsg)
                 {
-                    string s = x.Replace(x, x + Environment.NewLine);
+                    string s = x.Replace(x, x + "<br>");
                     this.ltlmsg.Text += s;
                 }
                 return;

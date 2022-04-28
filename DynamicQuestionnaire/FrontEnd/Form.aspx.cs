@@ -58,6 +58,8 @@ namespace DynamicQuestionnaire.FrontEnd
                 {
                     Label lbl = new Label();
                     string lbltext = $"{i + 1}. {qtll[i].Title}";
+                    if (qtll[i].Zettai == 1)
+                        lbltext = $"{i + 1}. {qtll[i].Title} *";
                     lbl.Text = lbltext;
                     this.plh.Controls.Add(lbl);
                     switch (qtll[i].Type)
@@ -146,7 +148,7 @@ namespace DynamicQuestionnaire.FrontEnd
                                 {
                                     for (var k = 0; k < krk.KirokuList[i].ckbNaiyo.Count; k++)
                                     {
-                                        if (string.Compare(ckb.Items[j].Text, krk.KirokuList[i].ckbNaiyo[k])                == 0)
+                                        if (string.Compare(ckb.Items[j].Text, krk.KirokuList[i].ckbNaiyo[k]) == 0)
                                         {
                                             ckb.Items[j].Selected = true;
                                         }
@@ -197,7 +199,7 @@ namespace DynamicQuestionnaire.FrontEnd
             {
                 foreach (var x in errormsg)
                 {
-                    string s = x.Replace(x, x + Environment.NewLine);
+                    string s = x.Replace(x,x +"<br>");
                     this.errormsg.Text += s;
                 }
                 return;
@@ -228,8 +230,8 @@ namespace DynamicQuestionnaire.FrontEnd
                 switch (this._qtll[i].Type)
                 {
                     case 1:
-                        for (var j = 0; j < this._qtll[i].NaiyoList.Count; j++)
-                        {
+                        //for (var j = 0; j < this._qtll[i].NaiyoList.Count; j++)
+                        //{
                             int check = 0;
                             RadioButtonList rdb = (RadioButtonList)this.plh.FindControl($"Mondai{i}");
                             for (var k = 0; k < rdb.Items.Count; k++)
@@ -244,7 +246,9 @@ namespace DynamicQuestionnaire.FrontEnd
                             }
                             if (check == 1)
                                 break;
-                        }
+                            if (this._qtll[i].Zettai == 1 && check == 0)
+                                errormsg.Add($"第{i+1}題 {this._qtll[i].Title}為必填");
+                        //}
                         break;
                     case 2:
                         List<string> ckbl = new List<string>();
@@ -259,15 +263,36 @@ namespace DynamicQuestionnaire.FrontEnd
                                 }
                             }
                         }
+                        if (ckbl.Count == 0)
+                            if (this._qtll[i].Zettai == 1)
+                            {
+                                errormsg.Add($"第{i}題 {this._qtll[i].Title}為必填");
+                                break;
+                            }
                         krkl.ckbNaiyo = ckbl;
                         krkll.Add(krkl);
                         break;
                     default:
                         TextBox txb = (TextBox)this.plh.FindControl($"Mondai{i}");
+                        if (this._qtll[i].Zettai == 1 && string.IsNullOrWhiteSpace(txb.Text) == true )
+                        {
+                            errormsg.Add($"第{i+1}題 {this._qtll[i].Title}為必填");
+                            break;
+                        }
                         krkl.Naiyo = txb.Text;
                         krkll.Add(krkl);
                         break;
                 }
+            }
+            // 第二次檢查，確認動態選項必填需完成才放行
+            if (errormsg.Count > 0)
+            {
+                foreach (var x in errormsg)
+                {
+                    string s = x.Replace(x, x + "<br>");
+                    this.errormsg.Text += s;
+                }
+                return;
             }
             krk.KirokuList = krkll;
             HttpContext.Current.Session["Kiroku"] = krk;

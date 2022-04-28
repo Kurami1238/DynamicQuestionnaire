@@ -46,6 +46,8 @@ namespace DynamicQuestionnaire.ShareControls
             int pageCount = this.TotalRow / this.PageSize;
             if ((pageCount % this.PageSize) > 0)
                 pageCount += 1;
+            if (pageCount == 0)
+                pageCount = 1;
             string url = this.Url;
             string qsText = this.BuildQueryString(colletion);
 
@@ -53,8 +55,11 @@ namespace DynamicQuestionnaire.ShareControls
             this.aLinkPrev.HRef = url + $"?Page={this.PageIndex - 1}" + qsText;
             this.aLinkNext.HRef = url + $"?Page={this.PageIndex + 1}" + qsText;
             this.aLinkLast.HRef = url + $"?Page={pageCount}" + qsText;
-
-            this.aLinkPage1.HRef = url + $"?Page={this.PageIndex - 2}" + qsText;
+            if (this.TotalRow < 2 || (this.PageIndex + 1) > pageCount)
+                this.aLinkNext.Visible = false;
+            if (this.PageIndex - 1 == 0)
+                this.aLinkPrev.Visible = false;
+                this.aLinkPage1.HRef = url + $"?Page={this.PageIndex - 2}" + qsText;
             this.aLinkPage1.InnerText = (this.PageIndex - 2).ToString();
             if (this.PageIndex <= 2)
                 this.aLinkPage1.Visible = false;

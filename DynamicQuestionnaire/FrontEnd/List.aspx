@@ -24,11 +24,14 @@
         <asp:HiddenField runat="server" ID="hdf" />
         <input type="hidden" id="msgmsg" class="msgmsg" runat="server" />
         <div>
+            <a href="../Index.aspx">
+                    <h2>DynamicQuestionnaire</h2>
+                </a>
             <asp:Literal runat="server" ID="ltl1" Text="問卷標題"></asp:Literal>
             <asp:TextBox runat="server" ID="txbT"></asp:TextBox><br />
             <asp:Literal runat="server" ID="ltl2" Text="開始／結束"></asp:Literal>
             <asp:TextBox runat="server" ID="txbS"></asp:TextBox><asp:TextBox runat="server" ID="txbE"></asp:TextBox>
-            <asp:Button runat="server" ID="btnS" Text="搜尋" OnClick="btnS_Click" /><br />
+            <asp:Button runat="server" ID="btnS" CssClass="btn-dark" Text="搜尋" OnClick="btnS_Click" /><br />
             <asp:Literal runat="server" ID="ltlmsg"></asp:Literal>
         </div>
         <div>

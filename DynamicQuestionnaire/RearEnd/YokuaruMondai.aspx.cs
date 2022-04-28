@@ -179,5 +179,16 @@ namespace DynamicQuestionnaire.RearEnd
             HttpContext.Current.Session["Msg"] = "新增常用問題成功";
             Response.Redirect("YokuaruMondai.aspx", true);
         }
+
+        protected void ddlType_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (this.ddlType.SelectedValue != "1")
+                if (this.ddlType.SelectedValue != "2")
+                    this.ph.Visible = false;
+            if (this.ddlType.SelectedValue == "1")
+                this.ph.Visible = true;
+            if (this.ddlType.SelectedValue == "2")
+                this.ph.Visible = true;
+        }
     }
 }

@@ -41,7 +41,8 @@ namespace DynamicQuestionnaire.API
                         Type = _qtll[i].Type,
                         KazuandKiroku = new List<KazuandKiroku>(),
                     };
-                    for (var j = 0; j < _qtll[i].NaiyoList.Count; j++)
+                    if (_qtll[i].NaiyoList != null)
+                        for (var j = 0; j < _qtll[i].NaiyoList.Count; j++)
                     {
                         KazuandKiroku kak = new KazuandKiroku()
                         {

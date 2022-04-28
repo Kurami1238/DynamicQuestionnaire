@@ -79,6 +79,7 @@
     <Content Include="FrontEnd\List.aspx" />
     <Content Include="FrontEnd\Stastic.aspx" />
     <Content Include="Global.asax" />
+    <Content Include="Index.aspx" />
     <Content Include="JS\bootstrap.js" />
     <Content Include="JS\Chart.min.js" />
     <Content Include="JS\jquery.js" />
@@ -127,6 +128,13 @@
     </Compile>
     <Compile Include="Helpers\ConfigHelper.cs" />
     <Compile Include="Helpers\Logger.cs" />
+    <Compile Include="Index.aspx.cs">
+      <DependentUpon>Index.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Index.aspx.designer.cs">
+      <DependentUpon>Index.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Manager\QuestionManager.cs" />
     <Compile Include="Models\Kiroku.cs" />
     <Compile Include="Models\KirokuList.cs" />

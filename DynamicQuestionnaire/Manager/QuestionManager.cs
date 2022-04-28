@@ -340,11 +340,19 @@ namespace DynamicQuestionnaire.Manager
         public void CreateQuestionList(QuestionList qtl)
         {
             string connectionString = ConfigHelper.GetConnectionString();
-            string commandText =
-                $@" INSERT INTO QuestionList
+            string commandText = "";
+
+            if (qtl.Type == 1 || qtl.Type == 2)
+                commandText = $@" INSERT INTO QuestionList
                     (QuestionListID, Title ,Type ,NaiyoListID, Zyunban, Zettai)
                     VALUES
                     (@QuestionListID, @Title ,@Type ,@NaiyoListID, @Zyunban, @Zettai)
+                   ";
+            else
+                commandText = $@" INSERT INTO QuestionList
+                    (QuestionListID, Title ,Type , Zyunban, Zettai)
+                    VALUES
+                    (@QuestionListID, @Title ,@Type , @Zyunban, @Zettai)
                    ";
             try
             {
@@ -356,16 +364,18 @@ namespace DynamicQuestionnaire.Manager
                         command.Parameters.AddWithValue(@"QuestionListID", qtl.QuestionListID);
                         command.Parameters.AddWithValue(@"Title", qtl.Title);
                         command.Parameters.AddWithValue(@"Type", qtl.Type);
-                        command.Parameters.AddWithValue(@"NaiyoListID", qtl.NaiyoListID);
+                        if (qtl.Type == 1 || qtl.Type == 2)
+                            command.Parameters.AddWithValue(@"NaiyoListID", qtl.NaiyoListID);
                         command.Parameters.AddWithValue(@"Zyunban", qtl.Zyunban);
                         command.Parameters.AddWithValue(@"Zettai", qtl.Zettai);
                         command.ExecuteNonQuery();
                     }
                 }
-                for (var i = 0; i < qtl.NaiyoList.Count; i++)
-                {
-                    this.CreateNaiyoList(qtl.NaiyoList[i]);
-                }
+                if (qtl.NaiyoList != null)
+                    for (var i = 0; i < qtl.NaiyoList.Count; i++)
+                    {
+                        this.CreateNaiyoList(qtl.NaiyoList[i]);
+                    }
             }
             catch (Exception ex)
             {
@@ -411,6 +421,7 @@ namespace DynamicQuestionnaire.Manager
                 else
                     zyouken += $" (QuestionListID = @{i}) ";
                 // 先刪除問題的資料
+                if (qtll[i].NaiyoList != null)
                 this.DeleteNaiyoList(qtll[i].NaiyoList);
             }
             string connectionString = ConfigHelper.GetConnectionString();
@@ -756,7 +767,7 @@ namespace DynamicQuestionnaire.Manager
                 throw;
             }
         }
-        public List<Kiroku> GetKirokuWithStastic(Guid qtID,int pageSize, int pageIndex, out int totalRows)
+        public List<Kiroku> GetKirokuWithStastic(Guid qtID, int pageSize, int pageIndex, out int totalRows)
         {
             int skip = pageSize * (pageIndex - 1); // 計算跳頁數
             if (skip < 0)

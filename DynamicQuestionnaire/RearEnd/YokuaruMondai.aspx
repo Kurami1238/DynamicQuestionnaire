@@ -19,6 +19,9 @@
 <body>
     <form id="form1" runat="server">
         <div class="row">
+             <a href="../Index.aspx">
+                    <h2>DynamicQuestionnaire</h2>
+                </a>
             <div class="hidari col-sm-3 col-md-3 col-lg-3">
                 <a href="List.aspx">
                     <asp:Literal runat="server" Text="問卷管理"></asp:Literal>
@@ -31,7 +34,7 @@
             <div class="migi col-sm-8 col-md-8 col-lg-8">
                 <input type="hidden" id="msgmsg" class="msgmsg" runat="server" />
                 <asp:Literal runat="server" Text="問題"></asp:Literal><asp:TextBox runat="server" ID="txbquestion"></asp:TextBox>
-                <asp:DropDownList runat="server" ID="ddlType">
+                <asp:DropDownList runat="server" ID="ddlType" OnSelectedIndexChanged="ddlType_SelectedIndexChanged">
                     <asp:ListItem Text="單選方塊" Value="1"></asp:ListItem>
                     <asp:ListItem Text="多選方塊" Value="2"></asp:ListItem>
                     <asp:ListItem Text="文字" Value="3"></asp:ListItem>
