@@ -29,13 +29,16 @@ namespace DynamicQuestionnaire.Manager
                             ( 
                             SELECT TOP {skip} QuestionID
                             FROM Questions
+                            WHERE State != 2
                             ORDER BY DateEnd DESC
                             )
+                        AND State != 2
                         ORDER BY DateEnd DESC
                 ";
             string commandCountText =
-                $@"  SELECT COUNT(QuestionID)
+                $@" SELECT COUNT(QuestionID)
                     FROM Questions
+                    WHERE State != 2
                     ";
             try
             {
@@ -83,7 +86,7 @@ namespace DynamicQuestionnaire.Manager
             if (skip < 0)
                 skip = 0;
             string Zyouken = " ";
-            Zyouken += $" (QName LIKE '%'+@{hosii}+'%') AND (DateStart >= @S AND DateEnd <= @E) ";
+            Zyouken += $" (QName LIKE '%'+@{hosii}+'%') AND (DateStart >= @S AND DateEnd <= @E) AND (State != 2)";
             string connectionStr = ConfigHelper.GetConnectionString();
             string commandText =
                 $@"
