@@ -373,7 +373,7 @@
 									"font": "Arial;13;1",
 									"left": 712,
 									"top": 205,
-									"width": 148.49169921875,
+									"width": 148.5869140625,
 									"height": 13,
 									"text": "NaiyoList"
 								},
@@ -399,7 +399,7 @@
 											"font": "Arial;13;0",
 											"left": 717,
 											"top": 228,
-											"width": 138.49169921875,
+											"width": 138.5869140625,
 											"height": 13
 										},
 										{
@@ -414,21 +414,21 @@
 											"font": "Arial;13;0",
 											"left": 717,
 											"top": 243,
-											"width": 138.49169921875,
+											"width": 138.5869140625,
 											"height": 13
 										}
 									],
 									"font": "Arial;13;0",
 									"left": 712,
 									"top": 223,
-									"width": 148.49169921875,
+									"width": 148.5869140625,
 									"height": 38
 								}
 							],
 							"font": "Arial;13;0",
 							"left": 712,
 							"top": 200,
-							"width": 148.49169921875,
+							"width": 148.5869140625,
 							"height": 61,
 							"nameLabel": {
 								"$ref": "AAAAAAGAPBk4b6qdBcY="
@@ -975,13 +975,28 @@
 											"top": 457,
 											"width": 165.18359375,
 											"height": 13
+										},
+										{
+											"_type": "ERDColumnView",
+											"_id": "AAAAAAGAc12Fg2v9UPM=",
+											"_parent": {
+												"$ref": "AAAAAAGAPCpeNaur/4I="
+											},
+											"model": {
+												"$ref": "AAAAAAGAc12FeWv6C0g="
+											},
+											"font": "Arial;13;0",
+											"left": 445,
+											"top": 472,
+											"width": 165.18359375,
+											"height": 13
 										}
 									],
 									"font": "Arial;13;0",
 									"left": 440,
 									"top": 407,
 									"width": 175.18359375,
-									"height": 68
+									"height": 83
 								}
 							],
 							"font": "Arial;13;0",
@@ -1096,7 +1111,7 @@
 									"font": "Arial;13;1",
 									"left": 688,
 									"top": 389,
-									"width": 135.47265625,
+									"width": 138.951171875,
 									"height": 13,
 									"text": "Mondais"
 								},
@@ -1122,7 +1137,7 @@
 											"font": "Arial;13;0",
 											"left": 693,
 											"top": 412,
-											"width": 125.47265625,
+											"width": 128.951171875,
 											"height": 13
 										},
 										{
@@ -1137,7 +1152,7 @@
 											"font": "Arial;13;0",
 											"left": 693,
 											"top": 427,
-											"width": 125.47265625,
+											"width": 128.951171875,
 											"height": 13
 										},
 										{
@@ -1152,7 +1167,7 @@
 											"font": "Arial;13;0",
 											"left": 693,
 											"top": 442,
-											"width": 125.47265625,
+											"width": 128.951171875,
 											"height": 13
 										},
 										{
@@ -1167,7 +1182,7 @@
 											"font": "Arial;13;0",
 											"left": 693,
 											"top": 457,
-											"width": 125.47265625,
+											"width": 128.951171875,
 											"height": 13
 										},
 										{
@@ -1182,21 +1197,21 @@
 											"font": "Arial;13;0",
 											"left": 693,
 											"top": 472,
-											"width": 125.47265625,
+											"width": 128.951171875,
 											"height": 13
 										}
 									],
 									"font": "Arial;13;0",
 									"left": 688,
 									"top": 407,
-									"width": 135.47265625,
+									"width": 138.951171875,
 									"height": 83
 								}
 							],
 							"font": "Arial;13;0",
 							"left": 688,
 							"top": 384,
-							"width": 135.47265625,
+							"width": 138.951171875,
 							"height": 106,
 							"nameLabel": {
 								"$ref": "AAAAAAGAaMG4nqxxhB4="
@@ -1677,6 +1692,16 @@
 							},
 							"name": "Naiyo",
 							"type": "varchar",
+							"length": 0
+						},
+						{
+							"_type": "ERDColumn",
+							"_id": "AAAAAAGAc12FeWv6C0g=",
+							"_parent": {
+								"$ref": "AAAAAAGAPCpeNaunnio="
+							},
+							"name": "Zyunban",
+							"type": "integer",
 							"length": 0
 						}
 					]
