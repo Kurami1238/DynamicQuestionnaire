@@ -23,6 +23,7 @@
         #nav-static span {
             display: block;
         }
+
     </style>
 </head>
 <body>

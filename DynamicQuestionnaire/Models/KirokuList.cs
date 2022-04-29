@@ -11,6 +11,7 @@ namespace DynamicQuestionnaire.Models
         public string Title { get; set; }
         public int Type { get; set; }
         public string Naiyo { get; set; }
+        public int Zyunban { get; set; }
         public List<string> ckbNaiyo { get; set; }
     }
 }

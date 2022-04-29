@@ -99,7 +99,7 @@
                             </asp:TemplateField>
                             <asp:TemplateField HeaderText="觀看統計">
                                 <ItemTemplate>
-                                    <a runat="server" href='<%# "Detail.aspx?ID="+Eval("QuestionID") %>' title='<%# "前往："+Eval("QName")+"問卷統計" %>'>
+                                    <a runat="server" href='<%# "Detail.aspx?ID="+Eval("QuestionID")+"#nav-static" %>' title='<%# "前往："+Eval("QName")+"問卷統計" %>'>
                                         <asp:Literal runat="server" ID="ltlsougou" Text="前往"></asp:Literal>
                                     </a>
                                 </ItemTemplate>

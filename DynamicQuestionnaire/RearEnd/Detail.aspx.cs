@@ -334,6 +334,10 @@ namespace DynamicQuestionnaire.RearEnd
         }
         protected void cancer_Click(object sender, EventArgs e)
         {
+            HttpContext.Current.Session["Editqt"] = null;
+            HttpContext.Current.Session["siryou"] = null;
+            HttpContext.Current.Session["Question"] = null;
+            HttpContext.Current.Session["QuestionListl"] = null;
             Response.Redirect("List.aspx", true);
         }
         protected void gogogo_Click(object sender, EventArgs e)

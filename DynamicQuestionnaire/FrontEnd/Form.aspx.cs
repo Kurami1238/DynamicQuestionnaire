@@ -239,6 +239,7 @@ namespace DynamicQuestionnaire.FrontEnd
                                 if (rdb.Items[k].Selected == true)
                                 {
                                     krkl.Naiyo = rdb.Items[k].Text;
+                                    krkl.Zyunban = i + 1;
                                     krkll.Add(krkl);
                                     check = 1;
                                     break;
@@ -270,6 +271,7 @@ namespace DynamicQuestionnaire.FrontEnd
                                 break;
                             }
                         krkl.ckbNaiyo = ckbl;
+                        krkl.Zyunban = i + 1;
                         krkll.Add(krkl);
                         break;
                     default:
@@ -280,6 +282,7 @@ namespace DynamicQuestionnaire.FrontEnd
                             break;
                         }
                         krkl.Naiyo = txb.Text;
+                        krkl.Zyunban = i + 1;
                         krkll.Add(krkl);
                         break;
                 }

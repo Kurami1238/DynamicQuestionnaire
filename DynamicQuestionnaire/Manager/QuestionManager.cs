@@ -86,7 +86,140 @@ namespace DynamicQuestionnaire.Manager
             if (skip < 0)
                 skip = 0;
             string Zyouken = " ";
-            Zyouken += $" (QName LIKE '%'+@{hosii}+'%') AND (DateStart >= @S AND DateEnd <= @E) AND (State != 2)";
+            if (string.Compare(E.ToString(),DateTime.MaxValue.ToString()) == 0)
+            {
+                Zyouken += $" (QName LIKE '%'+@{hosii}+'%') AND (DateStart >= @S AND DateEnd IS NULL OR DateEnd <= @E) AND (State != 2)";
+            }
+            else
+                Zyouken += $" (QName LIKE '%'+@{hosii}+'%') AND (DateStart >= @S AND DateEnd <= @E) AND (State != 2)";
+            string connectionStr = ConfigHelper.GetConnectionString();
+            string commandText =
+                $@"
+                    SELECT TOP {pageSize} * 
+                    FROM Questions
+                    WHERE 
+                        QuestionID NOT IN 
+                            ( 
+                            SELECT TOP {skip} QuestionID
+                            FROM Questions
+                            WHERE {Zyouken}
+                            ORDER BY DateEnd DESC
+                            )
+                        AND {Zyouken}
+                        ORDER BY DateEnd DESC
+                ";
+            string commandCountText =
+                $@"  SELECT COUNT(QuestionID)
+                    FROM Questions
+                    WHERE {Zyouken}
+                    ";
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(connectionStr))
+                {
+                    using (SqlCommand command = new SqlCommand(commandText, connection))
+                    {
+                        List<Question> QuestionList = new List<Question>();
+                        connection.Open();
+
+                        command.Parameters.AddWithValue($"@{hosii}", hosii);
+                        command.Parameters.AddWithValue($"@S", S);
+                            command.Parameters.AddWithValue($"@E", E);
+                        SqlDataReader reader = command.ExecuteReader();
+                        while (reader.Read())
+                        {
+                            Question po = this.BuildQuestionListContent(reader);
+                            QuestionList.Add(po);
+                        }
+                        reader.Close();
+
+                        // 取得總筆數
+                        // 因為使用同一個command，不同的查詢，必須使用不同的參數集合
+                        command.Parameters.Clear();
+                        command.CommandText = commandCountText;
+
+                        command.Parameters.AddWithValue($"@{hosii}", hosii);
+                        command.Parameters.AddWithValue($"@S", S);
+                            command.Parameters.AddWithValue($"@E", E);
+                        totalRows = (int)command.ExecuteScalar();
+                        // command.ExecuteScalar 只會回傳一個資料 為Object
+                        return QuestionList;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.WriteLog("QuestionManager.GetQuestionList", ex);
+                throw;
+            }
+        }
+        public List<Question> GetQuestionListwithRearEnd(int pageSize, int pageIndex, out int totalRows)
+        {
+            int skip = pageSize * (pageIndex - 1); // 計算跳頁數
+            if (skip < 0)
+                skip = 0;
+            string connectionStr = ConfigHelper.GetConnectionString();
+            string commandText =
+                $@"
+                    SELECT TOP {pageSize} * 
+                    FROM Questions
+                    WHERE 
+                        QuestionID NOT IN 
+                            ( 
+                            SELECT TOP {skip} QuestionID
+                            FROM Questions
+                            ORDER BY DateEnd DESC
+                            )
+                        ORDER BY DateEnd DESC
+                ";
+            string commandCountText =
+                $@" SELECT COUNT(QuestionID)
+                    FROM Questions
+                    ";
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(connectionStr))
+                {
+                    using (SqlCommand command = new SqlCommand(commandText, connection))
+                    {
+                        List<Question> QuestionList = new List<Question>();
+                        connection.Open();
+                        SqlDataReader reader = command.ExecuteReader();
+                        while (reader.Read())
+                        {
+                            Question po = this.BuildQuestionListContent(reader);
+                            QuestionList.Add(po);
+                        }
+                        reader.Close();
+
+                        // 取得總筆數
+                        // 因為使用同一個command，不同的查詢，必須使用不同的參數集合
+                        command.Parameters.Clear();
+                        command.CommandText = commandCountText;
+                        totalRows = (int)command.ExecuteScalar();
+                        // command.ExecuteScalar 只會回傳一個資料 為Object
+                        return QuestionList;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.WriteLog("QuestionManager.GetQuestionListwithRearEnd", ex);
+                throw;
+            }
+        }
+        public List<Question> GetQuestionListwithRearEnd(string hosii, DateTime S, DateTime E, int pageSize, int pageIndex, out int totalRows)
+        {
+            int skip = pageSize * (pageIndex - 1); // 計算跳頁數
+            if (skip < 0)
+                skip = 0;
+            string Zyouken = " ";
+            if (string.Compare(E.ToString(), DateTime.MaxValue.ToString()) == 0)
+            {
+                Zyouken += $" (QName LIKE '%'+@{hosii}+'%') AND (DateStart >= @S AND DateEnd IS NULL OR DateEnd <= @E)";
+            }
+            else
+                Zyouken += $" (QName LIKE '%'+@{hosii}+'%') AND (DateStart >= @S AND DateEnd <= @E)";
             string connectionStr = ConfigHelper.GetConnectionString();
             string commandText =
                 $@"
@@ -144,7 +277,7 @@ namespace DynamicQuestionnaire.Manager
             }
             catch (Exception ex)
             {
-                Logger.WriteLog("QuestionManager.GetQuestionList", ex);
+                Logger.WriteLog("QuestionManager.GetQuestionListwithRearEnd", ex);
                 throw;
             }
         }
@@ -425,7 +558,7 @@ namespace DynamicQuestionnaire.Manager
                     zyouken += $" (QuestionListID = @{i}) ";
                 // 先刪除問題的資料
                 if (qtll[i].NaiyoList != null)
-                this.DeleteNaiyoList(qtll[i].NaiyoList);
+                    this.DeleteNaiyoList(qtll[i].NaiyoList);
             }
             string connectionString = ConfigHelper.GetConnectionString();
             string commandText =
@@ -657,9 +790,9 @@ namespace DynamicQuestionnaire.Manager
             string connectionString = ConfigHelper.GetConnectionString();
             string commandText =
                 $@"  INSERT INTO KirokuList
-                    (KirokuListID, Title, Type, Naiyo)
+                    (KirokuListID, Title, Type, Naiyo, Zyunban)
                     VALUES
-                    (@KirokuListID, @Title, @Type, @Naiyo)
+                    (@KirokuListID, @Title, @Type, @Naiyo, @Zyunban)
                    ";
             try
             {
@@ -678,6 +811,7 @@ namespace DynamicQuestionnaire.Manager
                                     command.Parameters.AddWithValue(@"Title", krkl.Title);
                                     command.Parameters.AddWithValue(@"Type", krkl.Type);
                                     command.Parameters.AddWithValue(@"Naiyo", krkl.ckbNaiyo[i]);
+                                    command.Parameters.AddWithValue(@"Zyunban", krkl.Zyunban);
                                     command.ExecuteNonQuery();
                                 }
                                 break;
@@ -687,6 +821,7 @@ namespace DynamicQuestionnaire.Manager
                                 command.Parameters.AddWithValue(@"Title", krkl.Title);
                                 command.Parameters.AddWithValue(@"Type", krkl.Type);
                                 command.Parameters.AddWithValue(@"Naiyo", krkl.Naiyo);
+                                command.Parameters.AddWithValue(@"Zyunban", krkl.Zyunban);
                                 command.ExecuteNonQuery();
                                 break;
                         }
@@ -838,6 +973,7 @@ namespace DynamicQuestionnaire.Manager
                 @"
                     SELECT * FROM KirokuList
                     WHERE KirokuListID = @KirokuListID AND Type != 2
+                    ORDER BY Zyunban
                 ";
             try
             {
@@ -857,6 +993,7 @@ namespace DynamicQuestionnaire.Manager
                                 Title = (string)reader["Title"],
                                 Type = (int)reader["Type"],
                                 Naiyo = (string)reader["Naiyo"],
+                                Zyunban = (int)reader["Zyunban"],
                             };
                             krkll.Add(krkl);
                         }
@@ -870,6 +1007,7 @@ namespace DynamicQuestionnaire.Manager
                             // 整合進上面未含Type = 2的LIST
                             krkll.Add(krkl);
                         }
+                        krkll.Sort((x, y) => x.Zyunban.CompareTo(y.Zyunban));
                         return krkll;
                     }
                 }
@@ -941,6 +1079,7 @@ namespace DynamicQuestionnaire.Manager
                             krkl.Title = (string)reader["Title"];
                             krkl.Type = (int)reader["Type"];
                             string ckb = (string)reader["Naiyo"];
+                            krkl.Zyunban = (int)reader["Zyunban"];
                             ckbl.Add(ckb);
                         }
                         krkl.ckbNaiyo = ckbl;

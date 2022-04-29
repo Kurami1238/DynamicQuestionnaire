@@ -188,7 +188,7 @@
                         break;
                     case 2:
                         $('#Question').append(`<canvas id="chart${i}" class="chartgroup"></canvas>`);
-                        CreateChart('bar', `${i + 1}. ${list[i].Title}`, stasticlabel, stasticdata, rgba[1], rgba[0], `chart${i}`);
+                        CreateChart('pie', `${i + 1}. ${list[i].Title}`, stasticlabel, stasticdata, rgba[1], rgba[0], `chart${i}`);
                         break;
                     default:
                         $('#Question').append(`<span>${i + 1}.${list[i].Title}<br />  -</span>`);

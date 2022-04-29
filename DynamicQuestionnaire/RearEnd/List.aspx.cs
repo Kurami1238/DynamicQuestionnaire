@@ -39,9 +39,9 @@ namespace DynamicQuestionnaire.RearEnd
                 List<Question> qList = new List<Question>();
                 int totalRows = 0;
                 if (Caption == null)
-                    qList = this._qmgr.GetQuestionList(_pageSize, pageIndex, out totalRows);
+                    qList = this._qmgr.GetQuestionListwithRearEnd(_pageSize, pageIndex, out totalRows);
                 else
-                    qList = this._qmgr.GetQuestionList(Caption, StartDate, EndDate, _pageSize, pageIndex, out totalRows);
+                    qList = this._qmgr.GetQuestionListwithRearEnd(Caption, StartDate, EndDate, _pageSize, pageIndex, out totalRows);
                 this.gv.DataSource = qList;
                 this.gv.DataBind();
 

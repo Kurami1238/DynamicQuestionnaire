@@ -29,7 +29,7 @@
     <form id="form1" runat="server">
         <div runat="server" id="all" class="row col-sm-11 col-md-11 col-lg-11">
             <asp:Panel runat="server" ID="pnl">
-                <div class="State col-sm-3 col-md-3 col-lg-3">
+                <div class="State col-sm-10 col-md-10 col-lg-10">
                     <asp:Literal runat="server" ID="State"></asp:Literal><br />
                     <asp:Literal runat="server" ID="Date"></asp:Literal>
                 </div>
