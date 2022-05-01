@@ -88,7 +88,7 @@ namespace DynamicQuestionnaire.Manager
             string Zyouken = " ";
             if (string.Compare(E.ToString(),DateTime.MaxValue.ToString()) == 0)
             {
-                Zyouken += $" (QName LIKE '%'+@{hosii}+'%') AND (DateStart >= @S AND DateEnd IS NULL OR DateEnd <= @E) AND (State != 2)";
+                Zyouken += $" (QName LIKE '%'+@{hosii}+'%') AND ((DateStart >= @S AND DateEnd IS NULL) OR (DateStart >= @S AND DateEnd <= @E)) AND (State != 2)";
             }
             else
                 Zyouken += $" (QName LIKE '%'+@{hosii}+'%') AND (DateStart >= @S AND DateEnd <= @E) AND (State != 2)";

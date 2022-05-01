@@ -63,7 +63,7 @@
                         <asp:Literal runat="server" Text="結束時間"></asp:Literal><asp:TextBox runat="server" ID="txbE" TextMode="DateTime"></asp:TextBox><br />
                         <asp:CheckBox runat="server" ID="ckbState" Checked="true" Text="已啟用" /><br />
                         <asp:Literal runat="server" ID="ltlquestionmsg"></asp:Literal><br />
-                        <asp:Button runat="server" ID="cancer" Text="取消" OnClick="cancer_Click" CssClass="btn-dark" />
+                        <asp:Button runat="server" ID="cancer" Text="返回列表" OnClick="cancer_Click" CssClass="btn-dark" />
                         <asp:Button runat="server" ID="gogogo" Text="送出" OnClick="gogogo_Click" CssClass="btn-dark" />
                     </div>
                     <div class="tab-pane fade" id="nav-mondai" role="tabpanel" aria-labelledby="nav-mondai-tab">

@@ -120,7 +120,7 @@ namespace DynamicQuestionnaire.RearEnd
                         if (string.Compare(mdl[i].MondaiID.ToString(), e.CommandArgument.ToString()) == 0)
                         {
                             this.txbquestion.Text = mdl[i].Title;
-                            this.txbNaiyo.Text += mdl[i].Naiyo;
+                            this.txbNaiyo.Text = mdl[i].Naiyo;
                             this.ddlType.SelectedValue = mdl[i].Type.ToString();
                             this.ckbhituyou.Checked = mdl[i].Zettai == 1 ? true : false;
                             // 加入編輯QTLL的session 讓 qtl的加入辨認是否要覆蓋qtl

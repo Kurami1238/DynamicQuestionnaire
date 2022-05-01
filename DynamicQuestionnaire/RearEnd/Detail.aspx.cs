@@ -412,6 +412,8 @@ namespace DynamicQuestionnaire.RearEnd
                         qtll = (List<QuestionList>)HttpContext.Current.Session["Editqtll"];
                     else
                         qtll = (List<QuestionList>)HttpContext.Current.Session["QuestionListl"];
+                    string naiyo = "";
+                    this.txbNaiyo.Text = "";
                     for (var i = 0; i < qtll.Count; i++)
                     {
                         if (string.Compare(qtll[i].NaiyoListID.ToString(), e.CommandArgument.ToString()) == 0)
@@ -421,9 +423,9 @@ namespace DynamicQuestionnaire.RearEnd
                             for (var j = 0; j < qtll[i].NaiyoList.Count; j++)
                             {
                                 if (i != qtll[i].NaiyoList.Count - 1)
-                                    this.txbNaiyo.Text += qtll[i].NaiyoList[j].Naiyo + ';';
+                                    naiyo += qtll[i].NaiyoList[j].Naiyo + ';';
                                 else
-                                    this.txbNaiyo.Text += qtll[i].NaiyoList[j].Naiyo;
+                                    naiyo += qtll[i].NaiyoList[j].Naiyo;
                             }
                             this.ddlType.SelectedValue = qtll[i].Type.ToString();
                             this.ckbhituyou.Checked = qtll[i].Zettai == 1 ? true : false;
@@ -431,6 +433,7 @@ namespace DynamicQuestionnaire.RearEnd
                             HttpContext.Current.Session["EditNowqtl"] = qtll[i];
                         }
                     }
+                    this.txbNaiyo.Text = naiyo;
                     HttpContext.Current.Session["ChangeTab"] = "nav-mondai";
                     break;
             }
