@@ -51,7 +51,13 @@ namespace DynamicQuestionnaire.FrontEnd
             // 提示使用者訊息
             if (HttpContext.Current.Session["Msg"] != null)
             {
-                this.msgmsg.Value = HttpContext.Current.Session["Msg"].ToString();
+                string msg = HttpContext.Current.Session["Msg"].ToString();
+                if (string.Compare(msg, "YokuaruMondai") == 0)
+                {
+                    HttpContext.Current.Session["Msg"] = "常用問題管理尚有未完成的操作";
+                    Response.Redirect($"{msg}.aspx");
+                }
+                this.msgmsg.Value = msg;
                 HttpContext.Current.Session["Msg"] = null;
             }
         }

@@ -6,6 +6,7 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Web;
 
+
 namespace DynamicQuestionnaire.Manager
 {
     public class QuestionManager
@@ -216,7 +217,7 @@ namespace DynamicQuestionnaire.Manager
             string Zyouken = " ";
             if (string.Compare(E.ToString(), DateTime.MaxValue.ToString()) == 0)
             {
-                Zyouken += $" (QName LIKE '%'+@{hosii}+'%') AND (DateStart >= @S AND DateEnd IS NULL OR DateEnd <= @E)";
+                Zyouken += $" (QName LIKE '%'+@{hosii}+'%') AND ((DateStart >= @S AND DateEnd IS NULL) OR (DateStart >= @S AND DateEnd <= @E))";
             }
             else
                 Zyouken += $" (QName LIKE '%'+@{hosii}+'%') AND (DateStart >= @S AND DateEnd <= @E)";
@@ -1199,6 +1200,15 @@ namespace DynamicQuestionnaire.Manager
             {
                 Logger.WriteLog("QuestionManager.CreateMondaiList", ex);
                 throw;
+            }
+        }
+        public void Msgrr(string msg)
+        {
+            System.Web.UI.Page page = new System.Web.UI.Page();
+            if (string.Compare(msg, "YokuaruMondai") == 0)
+            {
+                HttpContext.Current.Session["Msg"] = "尚有未完成的操作";
+                page.Response.Redirect($"{msg}.aspx");
             }
         }
     }

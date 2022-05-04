@@ -17,6 +17,9 @@
         .Question textarea{
             display: block;
         }
+        .Question > placeholder > input{
+            display: block;
+        }
         .Kiroku{
             padding: 4px 10px 2px 2px;
         }

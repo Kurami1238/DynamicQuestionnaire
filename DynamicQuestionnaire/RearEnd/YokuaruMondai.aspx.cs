@@ -24,14 +24,24 @@ namespace DynamicQuestionnaire.RearEnd
                 mdl = (List<Mondai>)HttpContext.Current.Session["Nowmdl"];
             this.gv.DataSource = mdl;
             this.gv.DataBind();
+            //// 提示使用者訊息
+            //this.msgmsg.Value = string.Empty;
+            //if (HttpContext.Current.Session["Msg"] != null)
+            //{
+            //    this.msgmsg.Value = HttpContext.Current.Session["Msg"].ToString();
+            //    HttpContext.Current.Session["Msg"] = null;
+            //}
+        }
+        protected void Page_Load(object sender, EventArgs e)
+        {
             // 提示使用者訊息
+            this.msgmsg.Value = string.Empty;
             if (HttpContext.Current.Session["Msg"] != null)
             {
                 this.msgmsg.Value = HttpContext.Current.Session["Msg"].ToString();
                 HttpContext.Current.Session["Msg"] = null;
             }
         }
-
         protected void btnCreateMondai_Click(object sender, EventArgs e)
         {
             List<string> errormsg = new List<string>();
@@ -108,6 +118,8 @@ namespace DynamicQuestionnaire.RearEnd
             }
             this.gv.DataSource = mdl;
             this.gv.DataBind();
+            HttpContext.Current.Session["Msg"] = "YokuaruMondai";
+
         }
         protected void gv_RowCommand(object sender, GridViewCommandEventArgs e)
         {
@@ -158,6 +170,7 @@ namespace DynamicQuestionnaire.RearEnd
                     }
                 }
             }
+            HttpContext.Current.Session["Msg"] = "YokuaruMondai";
             HttpContext.Current.Session["Nowmdl"] = mdl;
             this.gv.DataSource = mdl;
             this.gv.DataBind();
@@ -170,6 +183,7 @@ namespace DynamicQuestionnaire.RearEnd
             HttpContext.Current.Session["Nowmdl"] = mdl;
             this.gv.DataSource = mdl;
             this.gv.DataBind();
+
         }
 
         protected void btnMondaigogogo_Click(object sender, EventArgs e)

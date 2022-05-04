@@ -94,5 +94,12 @@
             </div>
         </div>
     </form>
+    <script>
+        $(document).ready(function () {
+            var msg = $(".msgmsg").val();
+            if (msg != undefined && msg != null && msg != "")
+                alert(msg);
+        });
+    </script>
 </body>
 </html>

@@ -64,7 +64,7 @@
                         <asp:CheckBox runat="server" ID="ckbState" Checked="true" Text="已啟用" /><br />
                         <asp:Literal runat="server" ID="ltlquestionmsg"></asp:Literal><br />
                         <asp:Button runat="server" ID="cancer" Text="返回列表" OnClick="cancer_Click" CssClass="btn-dark" />
-                        <asp:Button runat="server" ID="gogogo" Text="送出" OnClick="gogogo_Click" CssClass="btn-dark" />
+                        <asp:Button runat="server" ID="gogogo" Text="新增問卷" OnClick="gogogo_Click" CssClass="btn-dark" />
                     </div>
                     <div class="tab-pane fade" id="nav-mondai" role="tabpanel" aria-labelledby="nav-mondai-tab">
                         <asp:Literal runat="server" Text="種類"></asp:Literal>

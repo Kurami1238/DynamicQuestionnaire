@@ -31,6 +31,11 @@ namespace DynamicQuestionnaire.RearEnd
             int pageIndex = (string.IsNullOrWhiteSpace(pageIndexText))
                 ? 1
                 : Convert.ToInt32(pageIndexText);
+            // 檢測Msg
+            if (HttpContext.Current.Session["Msg"] != null)
+            {
+                this._qmgr.Msgrr(HttpContext.Current.Session["Msg"].ToString());
+            }
             // 檢測跳頁籤
             if (HttpContext.Current.Session["ChangeTab"] != null)
             {
@@ -497,8 +502,10 @@ namespace DynamicQuestionnaire.RearEnd
                 else
                 {
                     qt = (Question)HttpContext.Current.Session["Question"];
+                   
                     if (HttpContext.Current.Session["QuestionListl"] != null)
                         qtll = (List<QuestionList>)HttpContext.Current.Session["QuestionListl"];
+                    
                 }
                 qtl = new QuestionList()
                 {
@@ -615,6 +622,11 @@ namespace DynamicQuestionnaire.RearEnd
             else
             {
                 qt = (Question)HttpContext.Current.Session["Question"];
+                if (qt == null)
+                {
+                    this.ltlmondaimsg.Text = "還未新增問卷無法送出";
+                    return;
+                }
                 qtll = (List<QuestionList>)HttpContext.Current.Session["QuestionListl"];
                 this._qmgr.CreateQuestion(qt, qtll);
             }
@@ -668,7 +680,6 @@ namespace DynamicQuestionnaire.RearEnd
         }
         protected void btnTocsv_Click(object sender, EventArgs e)
         {
-
             List<Kiroku> krkl = new List<Kiroku>();
             krkl = this._qmgr.GetKirokuWithStastic(this._qID);
             if (krkl.Count > 0)
@@ -720,7 +731,6 @@ namespace DynamicQuestionnaire.RearEnd
                 this.ltlsiryoumsg.Text = "無資料可匯出";
                 return;
             }
-
         }
         public void CreateCSVFile(DataTable dt, string strFilePath)
         {
