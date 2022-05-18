@@ -48,6 +48,8 @@ namespace DynamicQuestionnaire.ShareControls
                 pageCount += 1;
             if (pageCount == 0)
                 pageCount = 1;
+            if ((this.TotalRow % 10) == 0)
+                pageCount = this.TotalRow / 10;
             string url = this.Url;
             string qsText = this.BuildQueryString(colletion);
 

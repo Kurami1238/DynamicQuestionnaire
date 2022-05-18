@@ -61,10 +61,11 @@ namespace DynamicQuestionnaire.FrontEnd
                 HttpContext.Current.Session["Msg"] = null;
             }
         }
-
+        /// <summary> 搜尋按鈕 </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         protected void btnS_Click(object sender, EventArgs e)
         {
-
             DateTime S = Convert.ToDateTime("1900/1/1");
             DateTime E = DateTime.MaxValue;
             string caption = string.IsNullOrWhiteSpace(this.txbT.Text)

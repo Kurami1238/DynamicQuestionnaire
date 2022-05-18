@@ -335,7 +335,6 @@ namespace DynamicQuestionnaire.RearEnd
                 this.Pager.Bind();
             }
             this.ph.DataBind();
-
         }
         protected void cancer_Click(object sender, EventArgs e)
         {
@@ -502,7 +501,11 @@ namespace DynamicQuestionnaire.RearEnd
                 else
                 {
                     qt = (Question)HttpContext.Current.Session["Question"];
-                   
+                    if (qt == null)
+                    {
+                        this.ltlmondaimsg.Text = "還未新增問卷無法新增問題";
+                        return;
+                    }
                     if (HttpContext.Current.Session["QuestionListl"] != null)
                         qtll = (List<QuestionList>)HttpContext.Current.Session["QuestionListl"];
                     
